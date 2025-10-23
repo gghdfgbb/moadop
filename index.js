@@ -36,7 +36,7 @@ const DROPBOX_APP_SECRET = '9fy0w0pgaafyk3e';
 const DROPBOX_REFRESH_TOKEN = 'Vjhcbg66GMgAAAAAAAAAARJPgSupFcZdyXFkXiFx7VP-oXv_64RQKmtTLUYfPtm3';
 
 const config = {
-    telegramBotToken: '8494420933:AAFE3KUjFbOgmx-Bnqj1i7l2Jaxnzu0UXec',
+    telegramBotToken: '7769178707:AAHPttS1Ebpd8FdMPYfjZ9CX7_LEhK7zhkc',
     webPort: PORT,
     webBaseUrl: RENDER_DOMAIN,
     
