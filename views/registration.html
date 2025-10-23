@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moadop - Worker Application</title>
+    <style>
+        :root {
+            --primary: #2E86AB;
+            --primary-dark: #1B5E7A;
+            --primary-light: #4FA3C7;
+            --secondary: #1E1E2D;
+            --secondary-dark: #151521;
+            --accent: #00BCD4;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B0C0;
+            --text-tertiary: #7E7E8F;
+            --success: #4CAF50;
+            --error: #F44336;
+            --warning: #FF9800;
+            --info: #2196F3;
+            --border-radius: 12px;
+            --border-radius-sm: 6px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --box-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --glass-effect: rgba(30, 30, 45, 0.7);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+            --glass-blur: blur(10px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            background-image: radial-gradient(circle at 25% 25%, rgba(46, 134, 171, 0.1) 0%, transparent 50%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .registration-container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .registration-card {
+            background: var(--glass-effect);
+            backdrop-filter: var(--glass-blur);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            border: var(--glass-border);
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .registration-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(46, 134, 171, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo-container h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            color: var(--text-tertiary);
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-sm);
+            color: var(--text-primary);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 2px rgba(46, 134, 171, 0.2);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .select-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%237E7E8F' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: var(--box-shadow-sm);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 134, 171, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin: -10px 0 0 -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .alert-success {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            color: var(--success);
+        }
+
+        .alert-error {
+            background: rgba(244, 67, 54, 0.1);
+            border: 1px solid rgba(244, 67, 54, 0.3);
+            color: var(--error);
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .badge-customer-service {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .badge-rider {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            color: white;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-section-title {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-section-title i {
+            font-size: 1.2rem;
+        }
+
+        .role-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 20px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .role-info h4 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .role-info p {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 768px) {
+            .registration-card {
+                padding: 30px 20px;
+            }
+            
+            .logo-container h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="registration-container">
+        <div class="registration-card">
+            <div class="logo-container">
+                <h1>
+                    <span class="logo-icon">🏢</span>
+                    MOADOP
+                </h1>
+                <div class="subtitle">Professional Worker Application</div>
+            </div>
+
+            <div id="alert" class="alert"></div>
+
+            <form id="registrationForm">
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i>👤</i>
+                        Personal Information
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" class="form-control" placeholder="Enter your first name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" class="form-control" placeholder="Enter your last name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" class="form-control" placeholder="Enter your email address" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" class="form-control" placeholder="Enter your phone number" required>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i>💼</i>
+                        Role Selection
+                    </div>
+
+                    <div class="form-group">
+                        <label for="role">Select Your Role *</label>
+                        <select id="role" class="form-control select-control" required>
+                            <option value="">Choose your role...</option>
+                            <option value="customer_service">📞 Customer Service</option>
+                            <option value="rider">🚗 Rider</option>
+                        </select>
+                    </div>
+
+                    <div class="role-info" id="customerServiceInfo" style="display: none;">
+                        <h4>📞 Customer Service Role</h4>
+                        <p>As a Customer Service representative, you'll handle customer inquiries, process orders, and ensure customer satisfaction through excellent communication and problem-solving skills.</p>
+                    </div>
+
+                    <div class="role-info" id="riderInfo" style="display: none;">
+                        <h4>🚗 Rider Role</h4>
+                        <p>As a Rider, you'll be responsible for timely delivery of products, maintaining delivery standards, and providing excellent customer service during deliveries.</p>
+                    </div>
+
+                    <div class="form-group" id="stateField" style="display: none;">
+                        <label for="state">Select Your State *</label>
+                        <select id="state" class="form-control select-control">
+                            <option value="">Choose your state...</option>
+                            <!-- States will be populated by JavaScript -->
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    Submit Application
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const roleParam = urlParams.get('role');
+        const userId = window.location.pathname.split('/').pop();
+
+        // DOM elements
+        const form = document.getElementById('registrationForm');
+        const alert = document.getElementById('alert');
+        const roleSelect = document.getElementById('role');
+        const stateField = document.getElementById('stateField');
+        const stateSelect = document.getElementById('state');
+        const customerServiceInfo = document.getElementById('customerServiceInfo');
+        const riderInfo = document.getElementById('riderInfo');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Set role from URL parameter if provided
+        if (roleParam) {
+            roleSelect.value = roleParam;
+            toggleRoleInfo(roleParam);
+        }
+
+        // Role selection change handler
+        roleSelect.addEventListener('change', function() {
+            toggleRoleInfo(this.value);
+        });
+
+        function toggleRoleInfo(role) {
+            // Hide all info boxes first
+            customerServiceInfo.style.display = 'none';
+            riderInfo.style.display = 'none';
+            stateField.style.display = 'none';
+
+            // Show relevant info box and fields
+            if (role === 'customer_service') {
+                customerServiceInfo.style.display = 'block';
+            } else if (role === 'rider') {
+                riderInfo.style.display = 'block';
+                stateField.style.display = 'block';
+                loadStates();
+            }
+        }
+
+        // Load Nigeria states
+        async function loadStates() {
+            try {
+                const response = await fetch('/api/states');
+                const data = await response.json();
+                
+                if (data.success) {
+                    stateSelect.innerHTML = '<option value="">Choose your state...</option>';
+                    data.states.forEach(state => {
+                        const option = document.createElement('option');
+                        option.value = state;
+                        option.textContent = state;
+                        stateSelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading states:', error);
+            }
+        }
+
+        // Form submission handler
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                firstName: document.getElementById('firstName').value.trim(),
+                lastName: document.getElementById('lastName').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                role: roleSelect.value,
+                state: roleSelect.value === 'rider' ? stateSelect.value : null
+            };
+
+            // Basic validation
+            if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || !formData.role) {
+                showAlert('Please fill in all required fields', 'error');
+                return;
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(formData.email)) {
+                showAlert('Please enter a valid email address', 'error');
+                return;
+            }
+
+            // Phone validation
+            const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+            if (!phoneRegex.test(formData.phone)) {
+                showAlert('Please enter a valid phone number', 'error');
+                return;
+            }
+
+            // For riders, state is required
+            if (formData.role === 'rider' && !formData.state) {
+                showAlert('Please select your state for rider applications', 'error');
+                return;
+            }
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'Submitting Application...';
+            submitBtn.classList.add('btn-loading');
+
+            try {
+                const response = await fetch(`/register/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    setTimeout(() => {
+                        window.location.href = data.redirectUrl;
+                    }, 2000);
+                } else {
+                    showAlert(data.error || 'Failed to submit application', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Submit Application';
+                    submitBtn.classList.remove('btn-loading');
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.', 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Submit Application';
+                submitBtn.classList.remove('btn-loading');
+            }
+        });
+
+        function showAlert(message, type) {
+            alert.textContent = message;
+            alert.className = 'alert ' + (type === 'success' ? 'alert-success' : 'alert-error');
+            alert.style.display = 'block';
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    alert.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        // Initialize form based on URL parameters
+        if (roleParam) {
+            toggleRoleInfo(roleParam);
+        }
+    </script>
+</body>
+</html>
