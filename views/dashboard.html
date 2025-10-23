@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Moadop</title>
+    <style>
+        :root {
+            --primary: #2E86AB;
+            --primary-dark: #1B5E7A;
+            --primary-light: #4FA3C7;
+            --secondary: #1E1E2D;
+            --secondary-dark: #151521;
+            --accent: #00BCD4;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B0C0;
+            --text-tertiary: #7E7E8F;
+            --success: #4CAF50;
+            --error: #F44336;
+            --warning: #FF9800;
+            --info: #2196F3;
+            --border-radius: 12px;
+            --border-radius-sm: 6px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --box-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --glass-effect: rgba(30, 30, 45, 0.7);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+            --glass-blur: blur(10px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .welcome-card {
+            background: var(--glass-effect);
+            backdrop-filter: var(--glass-blur);
+            border-radius: var(--border-radius);
+            padding: 50px 40px;
+            border: var(--glass-border);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(46, 134, 171, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .logo {
+            margin-bottom: 20px;
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .logo-icon {
+            font-size: 3rem;
+        }
+
+        .tagline {
+            color: var(--text-tertiary);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .user-welcome {
+            margin-bottom: 30px;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 20px;
+        }
+
+        .user-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .user-role {
+            color: var(--primary);
+            font-size: 1rem;
+            font-weight: 600;
+            background: rgba(46, 134, 171, 0.2);
+            padding: 8px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px 20px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .action-card {
+            background: var(--glass-effect);
+            backdrop-filter: var(--glass-blur);
+            border-radius: var(--border-radius);
+            padding: 30px 25px;
+            border: var(--glass-border);
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .action-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--box-shadow);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .action-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .action-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .action-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #45a049);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #F57C00);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--info), #1976D2);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--box-shadow-sm);
+        }
+
+        .system-status {
+            background: var(--glass-effect);
+            backdrop-filter: var(--glass-blur);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            border: var(--glass-border);
+            margin-top: 30px;
+        }
+
+        .status-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .status-indicators {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius-sm);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .status-online {
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .status-active {
+            background: var(--primary);
+        }
+
+        .status-warning {
+            background: var(--warning);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .recent-activity {
+            background: var(--glass-effect);
+            backdrop-filter: var(--glass-blur);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            border: var(--glass-border);
+            margin-top: 30px;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .activity-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .activity-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(46, 134, 171, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .welcome-card {
+                padding: 30px 20px;
+            }
+
+            .logo h1 {
+                font-size: 2rem;
+            }
+
+            .quick-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .status-indicators {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quick-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .logo h1 {
+                font-size: 1.8rem;
+            }
+
+            .user-avatar {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Welcome Card -->
+        <div class="welcome-card">
+            <div class="logo">
+                <h1><span class="logo-icon">🏢</span> MOADOP</h1>
+                <div class="tagline">Professional Worker Management System</div>
+            </div>
+
+            <div class="user-welcome">
+                <div class="user-avatar" id="userAvatar">👤</div>
+                <div class="user-name" id="userName">Welcome Back!</div>
+                <div class="user-role" id="userRole">Team Member</div>
+            </div>
+
+            <div class="quick-stats">
+                <div class="stat-item">
+                    <span class="stat-icon">📊</span>
+                    <div class="stat-value" id="statOrders">0</div>
+                    <div class="stat-label">Total Orders</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">👥</span>
+                    <div class="stat-value" id="statWorkers">0</div>
+                    <div class="stat-label">Active Workers</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">✅</span>
+                    <div class="stat-value" id="statCompleted">0</div>
+                    <div class="stat-label">Completed Today</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">🌐</span>
+                    <div class="stat-value" id="statVisits">0</div>
+                    <div class="stat-label">Website Visits</div>
+                </div>
+            </div>
+
+            <div class="action-grid" id="actionGrid">
+                <!-- Action cards will be populated based on user role -->
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="system-status">
+            <div class="status-header">
+                <i>🔧</i> System Status
+            </div>
+            <div class="status-indicators">
+                <div class="status-item">
+                    <div class="status-dot status-online"></div>
+                    <span>Server Status: Online</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot status-active"></div>
+                    <span>Database: Connected</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot status-online"></div>
+                    <span>Telegram Bot: Active</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot status-online"></div>
+                    <span>Backup System: Ready</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="recent-activity">
+            <div class="activity-header">
+                <div class="activity-title">
+                    <i>📈</i> Recent Activity
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="refreshActivity()">
+                    <i>🔄</i> Refresh
+                </button>
+            </div>
+            <div class="activity-list" id="activityList">
+                <!-- Activity items will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let userRole = 'guest';
+        let statistics = {};
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserData();
+            loadStatistics();
+            loadRecentActivity();
+        });
+
+        // Load user data
+        async function loadUserData() {
+            try {
+                const userId = getUserIdFromURL();
+                const response = await fetch(`/api/user/${userId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    currentUser = data.user;
+                    userRole = data.worker?.role || 'guest';
+                    
+                    // Update user info
+                    document.getElementById('userName').textContent = 
+                        `Welcome, ${data.user.firstName} ${data.user.lastName}` || 'Welcome Back!';
+                    
+                    document.getElementById('userRole').textContent = 
+                        getRoleDisplayName(userRole);
+                    
+                    document.getElementById('userAvatar').textContent = 
+                        getRoleAvatar(userRole);
+                    
+                    // Load appropriate actions based on role
+                    loadActionCards(userRole);
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        // Load statistics
+        async function loadStatistics() {
+            try {
+                const response = await fetch('/api/statistics');
+                const data = await response.json();
+
+                if (data.success) {
+                    statistics = data.statistics;
+                    updateStatisticsDisplay();
+                }
+            } catch (error) {
+                console.error('Error loading statistics:', error);
+            }
+        }
+
+        // Update statistics display
+        function updateStatisticsDisplay() {
+            document.getElementById('statOrders').textContent = statistics.totalOrders || 0;
+            document.getElementById('statWorkers').textContent = statistics.totalWorkers || 0;
+            document.getElementById('statCompleted').textContent = statistics.deliveredOrders || 0;
+            document.getElementById('statVisits').textContent = statistics.websiteVisits || 0;
+        }
+
+        // Load action cards based on user role
+        function loadActionCards(role) {
+            const actionGrid = document.getElementById('actionGrid');
+            let actions = [];
+
+            switch (role) {
+                case 'superadmin':
+                case 'admin':
+                    actions = [
+                        {
+                            icon: '👑',
+                            title: 'Admin Panel',
+                            description: 'Access full system administration and management tools',
+                            buttonText: 'Open Admin Panel',
+                            action: () => window.location.href = `/dashboard/${getUserIdFromURL()}?role=admin`
+                        },
+                        {
+                            icon: '👥',
+                            title: 'Manage Workers',
+                            description: 'View, approve, and manage worker applications and profiles',
+                            buttonText: 'Manage Workers',
+                            action: () => window.location.href = `/dashboard/${getUserIdFromURL()}?tab=workers`
+                        },
+                        {
+                            icon: '📦',
+                            title: 'Order Management',
+                            description: 'Monitor and assign orders to customer service representatives',
+                            buttonText: 'View Orders',
+                            action: () => window.location.href = `/dashboard/${getUserIdFromURL()}?tab=orders`
+                        },
+                        {
+                            icon: '📊',
+                            title: 'Analytics',
+                            description: 'View system analytics and performance reports',
+                            buttonText: 'View Analytics',
+                            action: () => window.location.href = `/dashboard/${getUserIdFromURL()}?tab=analytics`
+                        }
+                    ];
+                    break;
+
+                case 'customer_service':
+                    actions = [
+                        {
+                            icon: '📞',
+                            title: 'Customer Service',
+                            description: 'Access customer service dashboard to process orders',
+                            buttonText: 'Open Dashboard',
+                            action: () => window.location.href = `/dashboard/${getUserIdFromURL()}`
+                        },
+                        {
+                            icon: '📦',
+                            title: 'My Orders',
+                            description: 'View and manage orders assigned to you',
+                            buttonText: 'View Orders',
+                            action: () => window.location.href = `/dashboard/${getUserIdFromURL()}?tab=my-orders`
+                        },
+                        {
+                            icon: '🚗',
+                            title: 'Coordinate with Riders',
+                            description: 'Communicate with riders and assign deliveries',
+                            buttonText: 'Contact Riders',
+                            action: () => window.location.href = `/dashboard/${getUserIdFromURL()}?tab=riders`
+                        },
+                        {
+                            icon: '💬',
+                            title: 'Messages',
+                            description: 'Communicate with team members and customers',
+                            buttonText: 'Open Messages',
+                            action: () => window.location.href = `/dashboard/${getUserIdFromURL()}?tab=messages`
+                        }
+                    ];
+                    break;
+
+                case 'rider':
+                    actions = [
+                        {
+                            icon: '🚗',
+                            title: 'Rider Dashboard',
+                            description: 'Access your rider dashboard for delivery management',
+                            buttonText: 'Open Dashboard',
+                            action: () => window.location.href = `/dashboard/${getUserIdFromURL()}`
+                        },
+                        {
+                            icon: '📦',
+                            title: 'My Deliveries',
+                            description: 'View and manage your assigned deliveries',
+                            buttonText: 'View Deliveries',
+                            action: () => window.location.href = `/dashboard/${getUserIdFromURL()}?tab=deliveries`
+                        },
+                        {
+                            icon: '🎯',
+                            title: 'Available Jobs',
+                            description: 'Browse and accept available delivery jobs',
+                            buttonText: 'Find Jobs',
+                            action: () => window.location.href = `/dashboard/${getUserIdFromURL()}?tab=available`
+                        },
+                        {
+                            icon: '🗺️',
+                            title: 'Delivery Map',
+                            description: 'View delivery locations and plan your routes',
+                            buttonText: 'View Map',
+                            action: () => window.location.href = `/dashboard/${getUserIdFromURL()}?tab=map`
+                        }
+                    ];
+                    break;
+
+                default:
+                    actions = [
+                        {
+                            icon: '📋',
+                            title: 'My Profile',
+                            description: 'View and update your personal information',
+                            buttonText: 'View Profile',
+                            action: () => window.location.href = `/profile/${getUserIdFromURL()}`
+                        },
+                        {
+                            icon: 'ℹ️',
+                            title: 'System Info',
+                            description: 'Learn more about the Moadop system',
+                            buttonText: 'Learn More',
+                            action: () => alert('Moadop Professional Worker Management System')
+                        }
+                    ];
+            }
+
+            actionGrid.innerHTML = actions.map(action => `
+                <div class="action-card" onclick="${action.action.toString().replace(/"/g, '&quot;')}">
+                    <span class="action-icon">${action.icon}</span>
+                    <div class="action-title">${action.title}</div>
+                    <div class="action-description">${action.description}</div>
+                    <button class="btn btn-primary" onclick="event.stopPropagation(); ${action.action.toString().replace(/"/g, '&quot;')}">
+                        ${action.buttonText}
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Load recent activity
+        async function loadRecentActivity() {
+            try {
+                // This would typically come from an API endpoint
+                // For now, we'll use placeholder data
+                const activities = [
+                    {
+                        icon: '📦',
+                        text: 'New order received from Customer',
+                        time: '2 minutes ago'
+                    },
+                    {
+                        icon: '👥',
+                        text: 'New worker application submitted',
+                        time: '15 minutes ago'
+                    },
+                    {
+                        icon: '✅',
+                        text: 'Order #ORD-001 marked as delivered',
+                        time: '1 hour ago'
+                    },
+                    {
+                        icon: '🚗',
+                        text: 'Rider assigned to delivery in Lagos',
+                        time: '2 hours ago'
+                    },
+                    {
+                        icon: '💬',
+                        text: 'New message from customer service',
+                        time: '3 hours ago'
+                    }
+                ];
+
+                const activityList = document.getElementById('activityList');
+                activityList.innerHTML = activities.map(activity => `
+                    <div class="activity-item">
+                        <div class="activity-icon">${activity.icon}</div>
+                        <div class="activity-content">
+                            <div class="activity-text">${activity.text}</div>
+                            <div class="activity-time">${activity.time}</div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading recent activity:', error);
+            }
+        }
+
+        // Utility functions
+        function getUserIdFromURL() {
+            const path = window.location.pathname.split('/');
+            return path[path.length - 1];
+        }
+
+        function getRoleDisplayName(role) {
+            const roleNames = {
+                'superadmin': 'Super Administrator',
+                'admin': 'Administrator',
+                'customer_service': 'Customer Service',
+                'rider': 'Delivery Rider',
+                'guest': 'Team Member'
+            };
+            return roleNames[role] || 'Team Member';
+        }
+
+        function getRoleAvatar(role) {
+            const avatars = {
+                'superadmin': '👑',
+                'admin': '⚡',
+                'customer_service': '📞',
+                'rider': '🚗',
+                'guest': '👤'
+            };
+            return avatars[role] || '👤';
+        }
+
+        function refreshActivity() {
+            loadRecentActivity();
+            alert('Activity refreshed!');
+        }
+
+        // Navigation functions
+        function navigateToAdmin() {
+            window.location.href = `/dashboard/${getUserIdFromURL()}?role=admin`;
+        }
+
+        function navigateToCustomerService() {
+            window.location.href = `/dashboard/${getUserIdFromURL()}`;
+        }
+
+        function navigateToRider() {
+            window.location.href = `/dashboard/${getUserIdFromURL()}`;
+        }
+
+        function navigateToProfile() {
+            window.location.href = `/profile/${getUserIdFromURL()}`;
+        }
+    </script>
+</body>
+</html>
