@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Care - Moadop</title>
+    <style>
+        /* Professional Mobile-First CSS */
+        :root {
+            /* Color System */
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #06b6d4;
+            
+            /* Neutral Colors */
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            
+            /* Semantic Colors */
+            --bg-primary: var(--white);
+            --bg-secondary: var(--gray-50);
+            --bg-tertiary: var(--gray-100);
+            --text-primary: var(--gray-900);
+            --text-secondary: var(--gray-600);
+            --text-tertiary: var(--gray-400);
+            --border-light: var(--gray-200);
+            --border-medium: var(--gray-300);
+            
+            /* Typography */
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            
+            /* Spacing */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            
+            /* Border Radius */
+            --radius: 0.5rem;
+            --radius-lg: 0.75rem;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-size: var(--text-base);
+            line-height: 1.5;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Layout */
+        .dashboard-layout {
+            min-height: 100vh;
+            background: var(--bg-secondary);
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 280px;
+            background: var(--bg-primary);
+            border-right: 1px solid var(--border-light);
+            padding: var(--space-6);
+            overflow-y: auto;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 40;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: var(--space-4);
+        }
+
+        .header {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-light);
+            padding: var(--space-4);
+            position: sticky;
+            top: 0;
+            z-index: 30;
+        }
+
+        @media (min-width: 768px) {
+            .sidebar {
+                transform: translateX(0);
+                position: static;
+            }
+            
+            .dashboard-layout {
+                display: grid;
+                grid-template-columns: 280px 1fr;
+            }
+            
+            .main-content {
+                padding: var(--space-6);
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--space-6);
+        }
+
+        .card-header {
+            margin-bottom: var(--space-4);
+        }
+
+        .card-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+        }
+
+        .card-description {
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-4);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            line-height: 1;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-sm {
+            padding: var(--space-2) var(--space-3);
+            font-size: var(--text-xs);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-medium);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: var(--white);
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: var(--space-1) var(--space-3);
+            font-size: var(--text-xs);
+            font-weight: 500;
+            border-radius: var(--radius);
+            line-height: 1;
+        }
+
+        .badge-primary {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+
+        /* Navigation */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius);
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin-bottom: var(--space-2);
+        }
+
+        .nav-item:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+
+        .stat-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .stat-label {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+        }
+
+        /* Order Cards */
+        .order-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin-bottom: var(--space-4);
+            transition: all 0.2s ease;
+        }
+
+        .order-card:hover {
+            box-shadow: var(--shadow);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-3);
+        }
+
+        .order-actions {
+            display: flex;
+            gap: var(--space-2);
+            flex-wrap: wrap;
+            margin-top: var(--space-3);
+        }
+
+        .status-badge {
+            font-size: var(--text-xs);
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius);
+            font-weight: 500;
+        }
+
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-processing { background: #dbeafe; color: #1e40af; }
+        .status-assigned { background: #f0f9ff; color: #0369a1; }
+        .status-delivered { background: #f0fdf4; color: #166534; }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: var(--space-4);
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: var(--space-3) var(--space-4);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Rider Grid */
+        .rider-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .rider-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-8);
+            margin-bottom: var(--space-6);
+            text-align: center;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: block;
+            background: none;
+            border: none;
+            font-size: var(--text-xl);
+            cursor: pointer;
+            padding: var(--space-2);
+        }
+
+        @media (min-width: 768px) {
+            .mobile-menu-btn {
+                display: none;
+            }
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 35;
+            display: none;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-md);
+            z-index: 50;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .modal.show {
+            display: block;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+            padding-bottom: var(--space-3);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: var(--text-xl);
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: var(--space-4);
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--text-sm);
+            font-weight: 500;
+            margin-bottom: var(--space-2);
+            color: var(--text-primary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            font-size: var(--text-sm);
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right var(--space-2) center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: var(--space-10);
+        }
+
+        /* Utilities */
+        .text-center { text-align: center; }
+        .text-secondary { color: var(--text-secondary); }
+        .text-tertiary { color: var(--text-tertiary); }
+
+        .font-semibold { font-weight: 600; }
+        .font-bold { font-weight: 700; }
+
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: var(--space-2); }
+        .gap-3 { gap: var(--space-3); }
+        .gap-4 { gap: var(--space-4); }
+
+        .w-full { width: 100%; }
+        .w-10 { width: 2.5rem; }
+        .w-12 { width: 3rem; }
+        .h-10 { height: 2.5rem; }
+        .h-12 { height: 3rem; }
+
+        .mb-2 { margin-bottom: var(--space-2); }
+        .mb-3 { margin-bottom: var(--space-3); }
+        .mb-4 { margin-bottom: var(--space-4); }
+        .mb-6 { margin-bottom: var(--space-6); }
+
+        .mt-3 { margin-top: var(--space-3); }
+
+        .p-6 { padding: var(--space-6); }
+        .p-8 { padding: var(--space-8); }
+
+        .rounded { border-radius: var(--radius); }
+        .rounded-full { border-radius: 9999px; }
+        .rounded-lg { border-radius: var(--radius-lg); }
+
+        .space-y-1 > * + * { margin-top: var(--space-1); }
+        .space-y-4 > * + * { margin-top: var(--space-4); }
+
+        .grid { display: grid; }
+        .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+        .col-span-full { grid-column: 1 / -1; }
+
+        /* Responsive Grid */
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .rider-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: var(--space-4);
+            right: var(--space-4);
+            z-index: 50;
+            padding: var(--space-4);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            max-width: 400px;
+            animation: slideIn 0.3s ease-out;
+            color: var(--white);
+        }
+
+        .toast-success {
+            background: var(--success);
+        }
+
+        .toast-error {
+            background: var(--error);
+        }
+
+        .toast-info {
+            background: var(--info);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Mobile Overlay -->
+        <div class="overlay" id="overlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="mb-6">
+                <h2 class="text-xl font-bold">🏢 Moadop</h2>
+                <p class="text-sm text-secondary">Customer Care</p>
+            </div>
+
+            <div class="card mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-semibold">
+                        📞
+                    </div>
+                    <div>
+                        <div class="font-semibold" id="userName">Loading...</div>
+                        <div class="text-xs text-secondary">Customer Care Agent</div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="space-y-1">
+                <a href="#" class="nav-item active" data-tab="overview">
+                    <span>📊</span>
+                    <span>Overview</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="my-orders">
+                    <span>📦</span>
+                    <span>My Orders</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="riders">
+                    <span>🚗</span>
+                    <span>Available Riders</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="messages">
+                    <span>💬</span>
+                    <span>Messages</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="performance">
+                    <span>📈</span>
+                    <span>My Performance</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <button class="mobile-menu-btn" id="mobileMenuBtn">
+                            ☰
+                        </button>
+                        <h1 class="text-xl font-semibold" id="pageTitle">Customer Care Dashboard</h1>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button class="btn btn-secondary btn-sm" onclick="refreshData()">
+                            🔄 Refresh
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Welcome Section -->
+            <section class="welcome-section" id="welcomeSection">
+                <h2 class="text-2xl font-bold mb-2">Welcome back! 👋</h2>
+                <p class="text-lg" id="welcomeMessage" style="opacity: 0.9;">Ready to help customers today?</p>
+            </section>
+
+            <!-- Overview Tab -->
+            <div id="overview" class="tab-content active">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="assignedOrders">0</div>
+                        <div class="stat-label">Assigned Orders</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="processedToday">0</div>
+                        <div class="stat-label">Processed Today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="pendingActions">0</div>
+                        <div class="stat-label">Pending Actions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="completionRate">0%</div>
+                        <div class="stat-label">Completion Rate</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card mb-6">
+                    <h3 class="card-title">Quick Actions</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button class="btn btn-primary" onclick="showTab('my-orders')">
+                            📦 My Orders
+                        </button>
+                        <button class="btn btn-secondary" onclick="showTab('riders')">
+                            🚗 Find Riders
+                        </button>
+                        <button class="btn btn-success" onclick="checkNewOrders()">
+                            🔍 Check New
+                        </button>
+                        <button class="btn btn-warning" onclick="showTab('messages')">
+                            💬 Messages
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recent Orders -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Orders</h3>
+                        <p class="card-description">Your most recent assigned orders</p>
+                    </div>
+                    <div id="recentOrders">
+                        <div class="text-center p-6 text-secondary">
+                            <div class="text-3xl mb-3">📦</div>
+                            <p>Loading your orders...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Orders Tab -->
+            <div id="my-orders" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">My Assigned Orders</h3>
+                        <p class="card-description">Orders assigned to you for processing</p>
+                    </div>
+                    
+                    <div class="tabs">
+                        <button class="tab active" data-order-filter="all">All Orders</button>
+                        <button class="tab" data-order-filter="pending">Pending</button>
+                        <button class="tab" data-order-filter="processing">Processing</button>
+                        <button class="tab" data-order-filter="delivered">Delivered</button>
+                    </div>
+
+                    <div id="myOrdersList">
+                        <div class="text-center p-8 text-secondary">
+                            <div class="text-3xl mb-3">📦</div>
+                            <p>Loading your orders...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Riders Tab -->
+            <div id="riders" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Available Riders</h3>
+                        <p class="card-description">Riders available for order assignments</p>
+                    </div>
+                    
+                    <div class="rider-grid" id="ridersGrid">
+                        <div class="text-center p-8 text-secondary col-span-full">
+                            <div class="text-3xl mb-3">🚗</div>
+                            <p>Loading available riders...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages Tab -->
+            <div id="messages" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Messages</h3>
+                        <p class="card-description">Communicate with riders and team members</p>
+                    </div>
+                    <div id="messagesContent">
+                        <div class="text-center p-8 text-secondary">
+                            <div class="text-3xl mb-3">💬</div>
+                            <p>Messages will appear here when you have conversations</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Tab -->
+            <div id="performance" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">My Performance</h3>
+                        <p class="card-description">Track your performance metrics</p>
+                    </div>
+                    <div id="performanceContent">
+                        <div class="text-center p-8 text-secondary">
+                            <div class="text-3xl mb-3">📈</div>
+                            <p>Performance analytics will be displayed here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Order Action Modal -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Order Actions</h3>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalContent">
+                <!-- Modal content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let myOrders = [];
+        let availableRiders = [];
+        let currentTab = 'overview';
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
+            setupEventListeners();
+            loadUserData();
+            loadMyOrders();
+            loadRiders();
+        });
+
+        function initializeDashboard() {
+            showWelcomeMessage();
+            setupMobileMenu();
+        }
+
+        function setupEventListeners() {
+            // Tab navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tab = this.getAttribute('data-tab');
+                    showTab(tab);
+                    
+                    if (window.innerWidth < 768) {
+                        closeMobileMenu();
+                    }
+                });
+            });
+
+            // Order filter tabs
+            document.querySelectorAll('[data-order-filter]').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-order-filter');
+                    filterMyOrders(filter);
+                });
+            });
+
+            // Close modal when clicking overlay
+            document.getElementById('overlay').addEventListener('click', closeModal);
+        }
+
+        function setupMobileMenu() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+
+            mobileMenuBtn.addEventListener('click', function() {
+                sidebar.classList.add('open');
+                overlay.classList.add('show');
+            });
+
+            overlay.addEventListener('click', function() {
+                closeMobileMenu();
+            });
+        }
+
+        function closeMobileMenu() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('show');
+        }
+
+        async function loadUserData() {
+            try {
+                const userId = getUserIdFromURL();
+                // Simulate API call - replace with actual API
+                setTimeout(() => {
+                    currentUser = {
+                        firstName: 'Sarah',
+                        lastName: 'Johnson',
+                        email: 'sarah@moadop.com'
+                    };
+                    
+                    document.getElementById('userName').textContent = 'Sarah Johnson';
+                    updateWelcomeMessage();
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                showToast('Error loading user data', 'error');
+            }
+        }
+
+        async function loadMyOrders() {
+            try {
+                // Simulate API call - replace with actual API
+                setTimeout(() => {
+                    myOrders = [
+                        {
+                            id: 'ORD-001',
+                            customerName: 'John Doe',
+                            customerPhone: '+2348012345678',
+                            product: 'iPhone 15 Pro',
+                            quantity: 1,
+                            status: 'pending',
+                            createdAt: new Date().toISOString()
+                        },
+                        {
+                            id: 'ORD-002',
+                            customerName: 'Jane Smith',
+                            customerPhone: '+2348098765432',
+                            product: 'Samsung Galaxy S24',
+                            quantity: 2,
+                            status: 'processing',
+                            createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
+                        },
+                        {
+                            id: 'ORD-003',
+                            customerName: 'Mike Johnson',
+                            customerPhone: '+2348055512345',
+                            product: 'MacBook Pro',
+                            quantity: 1,
+                            status: 'delivered',
+                            createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+                        }
+                    ];
+                    
+                    updateOrderStats();
+                    renderRecentOrders();
+                    renderMyOrders('all');
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                showToast('Error loading orders', 'error');
+            }
+        }
+
+        async function loadRiders() {
+            try {
+                // Simulate API call - replace with actual API
+                setTimeout(() => {
+                    availableRiders = [
+                        {
+                            id: 'R001',
+                            firstName: 'Ahmed',
+                            lastName: 'Musa',
+                            phone: '+2348077788999',
+                            state: 'Lagos',
+                            monthlyStats: { ordersDelivered: 45 }
+                        },
+                        {
+                            id: 'R002',
+                            firstName: 'Chinedu',
+                            lastName: 'Okoro',
+                            phone: '+2348066677888',
+                            state: 'Abuja',
+                            monthlyStats: { ordersDelivered: 32 }
+                        },
+                        {
+                            id: 'R003',
+                            firstName: 'Fatima',
+                            lastName: 'Bello',
+                            phone: '+2348055566677',
+                            state: 'Kano',
+                            monthlyStats: { ordersDelivered: 28 }
+                        }
+                    ];
+                    
+                    renderRiders();
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Error loading riders:', error);
+                showToast('Error loading riders', 'error');
+            }
+        }
+
+        function updateOrderStats() {
+            const assignedOrders = myOrders.length;
+            const processedToday = myOrders.filter(order => 
+                order.status === 'processing' || order.status === 'delivered'
+            ).length;
+            const pendingActions = myOrders.filter(order => 
+                order.status === 'pending' || order.status === 'assigned'
+            ).length;
+            const completionRate = myOrders.length > 0 ? 
+                Math.round((myOrders.filter(o => o.status === 'delivered').length / myOrders.length) * 100) : 0;
+
+            document.getElementById('assignedOrders').textContent = assignedOrders;
+            document.getElementById('processedToday').textContent = processedToday;
+            document.getElementById('pendingActions').textContent = pendingActions;
+            document.getElementById('completionRate').textContent = `${completionRate}%`;
+        }
+
+        function renderRecentOrders() {
+            const container = document.getElementById('recentOrders');
+            const recentOrders = myOrders.slice(0, 3);
+
+            if (recentOrders.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center p-6 text-secondary">
+                        <div class="text-3xl mb-3">📦</div>
+                        <p>No orders assigned yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = recentOrders.map(order => `
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <div class="font-semibold">${order.customerName}</div>
+                            <div class="text-sm text-secondary">${order.product} × ${order.quantity}</div>
+                        </div>
+                        <span class="status-badge status-${order.status}">
+                            ${order.status}
+                        </span>
+                    </div>
+                    <div class="text-sm text-secondary mb-3">
+                        📞 ${order.customerPhone} • 📅 ${formatDate(order.createdAt)}
+                    </div>
+                    <div class="order-actions">
+                        ${order.status === 'pending' ? `
+                            <button class="btn btn-success btn-sm" onclick="startProcessing('${order.id}')">
+                                Start Processing
+                            </button>
+                        ` : order.status === 'processing' ? `
+                            <button class="btn btn-primary btn-sm" onclick="assignToRider('${order.id}')">
+                                Assign to Rider
+                            </button>
+                        ` : ''}
+                        <button class="btn btn-secondary btn-sm" onclick="viewOrderDetails('${order.id}')">
+                            View Details
+                        </button>
+                        <button class="btn btn-warning btn-sm" onclick="contactCustomer('${order.id}')">
+                            Call Customer
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderMyOrders(filter = 'all') {
+            const container = document.getElementById('myOrdersList');
+            let filteredOrders = myOrders;
+
+            if (filter === 'pending') {
+                filteredOrders = myOrders.filter(order => order.status === 'pending');
+            } else if (filter === 'processing') {
+                filteredOrders = myOrders.filter(order => order.status === 'processing');
+            } else if (filter === 'delivered') {
+                filteredOrders = myOrders.filter(order => order.status === 'delivered');
+            }
+
+            if (filteredOrders.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center p-8 text-secondary">
+                        <div class="text-3xl mb-3">📦</div>
+                        <p>No orders found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredOrders.map(order => `
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <div class="font-semibold">${order.customerName}</div>
+                            <div class="text-sm text-secondary">${order.id}</div>
+                        </div>
+                        <span class="status-badge status-${order.status}">
+                            ${order.status}
+                        </span>
+                    </div>
+                    
+                    <div class="text-sm text-secondary mb-3">
+                        <div>📦 ${order.product} × ${order.quantity}</div>
+                        <div>📞 ${order.customerPhone}</div>
+                        <div>📅 ${formatDate(order.createdAt)}</div>
+                        ${order.assignedTo ? `<div>🚗 Assigned to rider</div>` : ''}
+                    </div>
+
+                    <div class="order-actions">
+                        ${getOrderActions(order)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderRiders() {
+            const container = document.getElementById('ridersGrid');
+            
+            if (availableRiders.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center p-8 text-secondary col-span-full">
+                        <div class="text-3xl mb-3">🚗</div>
+                        <p>No riders available at the moment</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = availableRiders.map(rider => `
+                <div class="rider-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white">
+                            🚗
+                        </div>
+                        <div>
+                            <div class="font-semibold">${rider.firstName} ${rider.lastName}</div>
+                            <div class="text-sm text-secondary">${rider.state || 'Unknown State'}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-sm text-secondary mb-3">
+                        <div>📞 ${rider.phone}</div>
+                        <div>✅ ${rider.monthlyStats?.ordersDelivered || 0} deliveries</div>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button class="btn btn-primary btn-sm flex-1" onclick="messageRider('${rider.id}')">
+                            Message
+                        </button>
+                        <button class="btn btn-secondary btn-sm flex-1" onclick="callRider('${rider.phone}')">
+                            Call
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getOrderActions(order) {
+            switch (order.status) {
+                case 'pending':
+                    return `
+                        <button class="btn btn-success btn-sm" onclick="startProcessing('${order.id}')">
+                            Start Processing
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="contactCustomer('${order.id}')">
+                            Call Customer
+                        </button>
+                    `;
+                case 'processing':
+                    return `
+                        <button class="btn btn-primary btn-sm" onclick="assignToRider('${order.id}')">
+                            Assign to Rider
+                        </button>
+                        <button class="btn btn-success btn-sm" onclick="markDelivered('${order.id}')">
+                            Mark Delivered
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="contactCustomer('${order.id}')">
+                            Call Customer
+                        </button>
+                    `;
+                case 'delivered':
+                    return `
+                        <button class="btn btn-secondary btn-sm" onclick="viewOrderDetails('${order.id}')">
+                            View Details
+                        </button>
+                    `;
+                default:
+                    return '';
+            }
+        }
+
+        // Order Actions
+        async function startProcessing(orderId) {
+            try {
+                showToast('Order processing started!', 'success');
+                // Update order status locally
+                const order = myOrders.find(o => o.id === orderId);
+                if (order) {
+                    order.status = 'processing';
+                }
+                loadMyOrders();
+            } catch (error) {
+                showToast('Error starting order processing', 'error');
+            }
+        }
+
+        async function markDelivered(orderId) {
+            try {
+                showToast('Order marked as delivered!', 'success');
+                // Update order status locally
+                const order = myOrders.find(o => o.id === orderId);
+                if (order) {
+                    order.status = 'delivered';
+                order.deliveredAt = new Date().toISOString();
+                order.deliveredBy = getUserIdFromURL();
+                }
+                loadMyOrders();
+            } catch (error) {
+                showToast('Error marking order as delivered', 'error');
+            }
+        }
+
+        function assignToRider(orderId) {
+            const order = myOrders.find(o => o.id === orderId);
+            if (!order) return;
+
+            document.getElementById('modalTitle').textContent = 'Assign to Rider';
+            document.getElementById('modalContent').innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-semibold mb-2">Order Details</h4>
+                        <p><strong>Customer:</strong> ${order.customerName}</p>
+                        <p><strong>Product:</strong> ${order.product}</p>
+                        <p><strong>Phone:</strong> ${order.customerPhone}</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Select Rider</label>
+                        <select class="form-input form-select" id="selectedRider">
+                            <option value="">Choose a rider...</option>
+                            ${availableRiders.map(rider => `
+                                <option value="${rider.id}">${rider.firstName} ${rider.lastName} - ${rider.state}</option>
+                            `).join('')}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Delivery Instructions</label>
+                        <textarea class="form-input" id="deliveryInstructions" placeholder="Add any special instructions..." rows="3"></textarea>
+                    </div>
+
+                    <button class="btn btn-primary w-full" onclick="confirmRiderAssignment('${orderId}')">
+                        Assign to Rider
+                    </button>
+                </div>
+            `;
+
+            openModal();
+        }
+
+        async function confirmRiderAssignment(orderId) {
+            const riderId = document.getElementById('selectedRider').value;
+            const instructions = document.getElementById('deliveryInstructions').value;
+
+            if (!riderId) {
+                showToast('Please select a rider', 'error');
+                return;
+            }
+
+            try {
+                // Update order locally
+                const order = myOrders.find(o => o.id === orderId);
+                if (order) {
+                    order.status = 'assigned';
+                    order.assignedTo = riderId;
+                    order.assignedAt = new Date().toISOString();
+                }
+
+                showToast('Order assigned to rider successfully!', 'success');
+                closeModal();
+                loadMyOrders();
+                
+                // In real app, send notification to rider
+                const rider = availableRiders.find(r => r.id === riderId);
+                if (rider) {
+                    showToast(`Notification sent to ${rider.firstName}`, 'success');
+                }
+                
+            } catch (error) {
+                showToast('Error assigning to rider', 'error');
+            }
+        }
+
+        // Utility Functions
+        function getUserIdFromURL() {
+            const path = window.location.pathname.split('/');
+            return path[path.length - 1] || 'user123';
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+
+            // Activate clicked nav item
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            // Update page title
+            document.getElementById('pageTitle').textContent = 
+                tabName.charAt(0).toUpperCase() + tabName.slice(1).replace('-', ' ');
+
+            currentTab = tabName;
+        }
+
+        function filterMyOrders(filter) {
+            // Update active tab
+            document.querySelectorAll('[data-order-filter]').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-order-filter="${filter}"]`).classList.add('active');
+
+            // Render filtered orders
+            renderMyOrders(filter);
+        }
+
+        function showWelcomeMessage() {
+            const hour = new Date().getHours();
+            let greeting = 'Good evening';
+
+            if (hour < 12) greeting = 'Good morning';
+            else if (hour < 18) greeting = 'Good afternoon';
+
+            document.getElementById('welcomeMessage').textContent = 
+                `${greeting}! Ready to help customers today?`;
+        }
+
+        function updateWelcomeMessage() {
+            if (currentUser) {
+                const hour = new Date().getHours();
+                let greeting = 'Good evening';
+
+                if (hour < 12) greeting = 'Good morning';
+                else if (hour < 18) greeting = 'Good afternoon';
+
+                document.getElementById('welcomeMessage').textContent = 
+                    `${greeting}, ${currentUser.firstName}! Ready to help customers today?`;
+            }
+        }
+
+        function openModal() {
+            document.getElementById('orderModal').classList.add('show');
+            document.getElementById('overlay').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('orderModal').classList.remove('show');
+            document.getElementById('overlay').classList.remove('show');
+        }
+
+        function refreshData() {
+            loadMyOrders();
+            loadRiders();
+            showToast('Data refreshed!', 'success');
+        }
+
+        function checkNewOrders() {
+            loadMyOrders();
+            showToast('Checked for new orders', 'success');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Placeholder functions
+        function viewOrderDetails(orderId) {
+            showToast('Order details view coming soon!', 'info');
+        }
+
+        function contactCustomer(orderId) {
+            const order = myOrders.find(o => o.id === orderId);
+            if (order) {
+                showToast(`Calling customer: ${order.customerPhone}`, 'info');
+            }
+        }
+
+        function messageRider(riderId) {
+            showToast('Messaging rider feature coming soon!', 'info');
+        }
+
+        function callRider(phone) {
+            showToast(`Calling rider: ${phone}`, 'info');
+        }
+    </script>
+</body>
+</html>
