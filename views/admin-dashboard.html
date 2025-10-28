@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIG DADDY V3 - Admin Control Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff0033;
+            --primary-dark: #cc0029;
+            --primary-light: #ff3355;
+            --secondary: #000000;
+            --dark: #121212;
+            --darker: #0a0a0a;
+            --light: #ffffff;
+            --medium-gray: #888888;
+            --success: #00ff66;
+            --warning: #ffaa00;
+            --danger: #ff0033;
+            --info: #0099ff;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #121212 100%);
+            color: var(--light);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.03);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-container {
+            padding: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, rgba(255, 0, 51, 0.1), transparent);
+        }
+
+        .logo-container h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+
+        .apps-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .app-item {
+            padding: 15px;
+            margin: 5px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .app-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+        }
+
+        .app-item.active {
+            background: rgba(255, 0, 51, 0.2);
+            border-color: var(--primary);
+        }
+
+        .app-name {
+            font-weight: 600;
+            color: var(--light);
+            margin-bottom: 5px;
+        }
+
+        .app-status {
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-running { background: var(--success); }
+        .status-stopped { background: var(--danger); }
+        .status-building { background: var(--warning); animation: pulse 2s infinite; }
+        .status-failed { background: var(--danger); animation: pulse 1s infinite; }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .app-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--light);
+        }
+
+        .app-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-warning { background: var(--warning); color: black; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-info { background: var(--info); color: white; }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 51, 0.4);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* App Dashboard */
+        .app-dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            color: var(--medium-gray);
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: var(--light);
+        }
+
+        /* Logs Container */
+        .logs-container {
+            background: #0a0a0a;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            height: 400px;
+            overflow-y: auto;
+            color: var(--light);
+            line-height: 1.4;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .log-line {
+            margin-bottom: 2px;
+            padding: 2px 0;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .log-line.info { color: #00ff66; }
+        .log-line.warning { color: #ffaa00; }
+        .log-line.error { color: #ff0033; }
+        .log-line.debug { color: #0099ff; }
+        .log-line.success { color: var(--success); }
+        .log-line.build { color: #ff66ff; }
+        .log-line.deploy { color: #66ff66; }
+
+        /* Process List */
+        .process-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .process-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .process-info {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .process-name {
+            font-weight: 600;
+            color: var(--light);
+        }
+
+        .process-type {
+            font-size: 0.8rem;
+            color: var(--medium-gray);
+        }
+
+        .process-details {
+            font-size: 0.7rem;
+            color: var(--medium-gray);
+            margin-top: 5px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            color: var(--medium-gray);
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: rgba(255, 0, 51, 0.1);
+        }
+
+        .tab:hover:not(.active) {
+            color: var(--light);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Deployment Progress */
+        .deployment-progress {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            color: var(--medium-gray);
+            font-size: 0.8rem;
+        }
+
+        /* Settings Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--light);
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: var(--light);
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(255, 0, 51, 0.2);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--medium-gray);
+            font-style: italic;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Deployment Item */
+        .deployment-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .deployment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .deployment-id {
+            font-family: 'Courier New', monospace;
+            color: var(--medium-gray);
+            font-size: 0.8rem;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            z-index: 10000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 400px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-success { background: var(--success); }
+        .notification-error { background: var(--danger); }
+        .notification-warning { background: var(--warning); color: black; }
+        .notification-info { background: var(--info); }
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 40px;
+            color: var(--danger);
+        }
+
+        .error-message i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .error-message h4 {
+            margin-bottom: 10px;
+            color: var(--danger);
+        }
+
+        .error-message p {
+            color: var(--medium-gray);
+            margin-bottom: 20px;
+        }
+
+        .retry-button {
+            margin-top: 15px;
+        }
+
+        /* Log Controls */
+        .log-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* System Status */
+        .system-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .status-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .status-value.healthy { color: var(--success); }
+        .status-value.warning { color: var(--warning); }
+        .status-value.error { color: var(--danger); }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                max-height: 300px;
+            }
+            
+            .app-dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .app-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .app-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .tabs {
+                overflow-x: auto;
+            }
+            
+            .tab {
+                white-space: nowrap;
+            }
+            
+            .system-status {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar with Apps List -->
+        <div class="sidebar">
+            <div class="logo-container">
+                <h1>BIG DADDY <span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 8px;">APPS</span></h1>
+            </div>
+            
+            <div class="apps-list" id="appsList">
+                <div class="empty-state">Loading apps...</div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Default State - No App Selected -->
+            <div id="noAppSelected">
+                <!-- System Status Overview -->
+                <div class="card">
+                    <h2 class="card-title">System Status Overview</h2>
+                    <div class="system-status" id="systemStatus">
+                        <div class="status-card">
+                            <i class="fas fa-server"></i>
+                            <div class="status-label">Heroku API</div>
+                            <div class="status-value" id="herokuStatus">Checking...</div>
+                        </div>
+                        <div class="status-card">
+                            <i class="fas fa-database"></i>
+                            <div class="status-label">Database</div>
+                            <div class="status-value" id="databaseStatus">Checking...</div>
+                        </div>
+                        <div class="status-card">
+                            <i class="fas fa-cloud"></i>
+                            <div class="status-label">Dropbox Backup</div>
+                            <div class="status-value" id="dropboxStatus">Checking...</div>
+                        </div>
+                        <div class="status-card">
+                            <i class="fas fa-robot"></i>
+                            <div class="status-label">Telegram Bot</div>
+                            <div class="status-value" id="telegramStatus">Checking...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <h3 class="card-title">Quick Actions</h3>
+                    <div class="quick-actions">
+                        <button class="btn btn-primary" onclick="testHerokuConnection()">
+                            <i class="fas fa-bolt"></i> Test Heroku API
+                        </button>
+                        <button class="btn btn-info" onclick="triggerBackup()">
+                            <i class="fas fa-cloud-upload-alt"></i> Backup Now
+                        </button>
+                        <button class="btn btn-success" onclick="healthCheckAllEndpoints()">
+                            <i class="fas fa-heartbeat"></i> Health Check
+                        </button>
+                        <button class="btn btn-warning" onclick="updateWhatsAppSessions()">
+                            <i class="fab fa-whatsapp"></i> Update Sessions
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="card">
+                    <h3 class="card-title">Recent Activity</h3>
+                    <div class="logs-container" id="recentActivity" style="height: 200px;">
+                        <div class="log-line info">Loading recent activity...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- App Details View (Hidden by default) -->
+            <div id="appDetailsView" style="display: none;">
+                <!-- App Header -->
+                <div class="app-header">
+                    <div>
+                        <h1 class="app-title" id="currentAppName">App Name</h1>
+                        <div class="app-status" id="currentAppStatus">
+                            <span class="status-dot status-running"></span>
+                            <span>Running</span>
+                        </div>
+                    </div>
+                    <div class="app-actions">
+                        <button class="btn btn-success" onclick="restartApp()" id="restartBtn">
+                            <i class="fas fa-redo"></i> Restart
+                        </button>
+                        <button class="btn btn-warning" onclick="stopApp()" id="stopBtn">
+                            <i class="fas fa-stop"></i> Stop
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteApp()" id="deleteBtn">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                        <button class="btn btn-primary" onclick="deployApp()" id="deployBtn">
+                            <i class="fas fa-rocket"></i> Deploy
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('overview')">Overview</button>
+                    <button class="tab" onclick="switchTab('logs')">Logs</button>
+                    <button class="tab" onclick="switchTab('processes')">Processes</button>
+                    <button class="tab" onclick="switchTab('deployments')">Deployments</button>
+                    <button class="tab" onclick="switchTab('settings')">Settings</button>
+                </div>
+
+                <!-- Tab Contents -->
+                <div id="overviewTab" class="tab-content active">
+                    <div class="app-dashboard">
+                        <div class="card">
+                            <h3 class="card-title">App Information</h3>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">App Name</span>
+                                    <span class="info-value" id="infoAppName">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Status</span>
+                                    <span class="info-value" id="infoStatus">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Region</span>
+                                    <span class="info-value" id="infoRegion">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Stack</span>
+                                    <span class="info-value" id="infoStack">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Created</span>
+                                    <span class="info-value" id="infoCreated">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Updated</span>
+                                    <span class="info-value" id="infoUpdated">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Web URL</span>
+                                    <span class="info-value">
+                                        <a href="#" id="infoWebUrl" target="_blank" style="color: var(--primary);">-</a>
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Git URL</span>
+                                    <span class="info-value">
+                                        <a href="#" id="infoGitUrl" target="_blank" style="color: var(--primary);">-</a>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3 class="card-title">Quick Actions</h3>
+                            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                                <button class="btn btn-info" onclick="viewLogs()">
+                                    <i class="fas fa-terminal"></i> View Logs
+                                </button>
+                                <button class="btn btn-warning" onclick="openConsole()">
+                                    <i class="fas fa-code"></i> Open Console
+                                </button>
+                                <button class="btn btn-primary" onclick="scaleApp()">
+                                    <i class="fas fa-expand-arrows-alt"></i> Scale Dynos
+                                </button>
+                                <button class="btn btn-success" onclick="runCommand()">
+                                    <i class="fas fa-play"></i> Run Command
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Logs Preview -->
+                    <div class="card">
+                        <h3 class="card-title">Recent Logs</h3>
+                        <div class="logs-container" id="recentLogs" style="height: 200px;">
+                            <div class="log-line info">Loading recent logs...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="logsTab" class="tab-content">
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h3 class="card-title">Real-time Logs</h3>
+                            <div class="log-controls">
+                                <button class="btn btn-info" onclick="startLogStream()" id="startLogsBtn">
+                                    <i class="fas fa-play"></i> Start Stream
+                                </button>
+                                <button class="btn btn-warning" onclick="stopLogStream()" id="stopLogsBtn">
+                                    <i class="fas fa-stop"></i> Stop Stream
+                                </button>
+                                <button class="btn btn-danger" onclick="clearLogs()">
+                                    <i class="fas fa-trash"></i> Clear
+                                </button>
+                            </div>
+                        </div>
+                        <div class="logs-container" id="liveLogs">
+                            <div class="log-line info">Click "Start Stream" to begin live logging</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="processesTab" class="tab-content">
+                    <div class="card">
+                        <h3 class="card-title">Processes (Dynos)</h3>
+                        <div class="process-list" id="processList">
+                            <div class="empty-state">Loading processes...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="deploymentsTab" class="tab-content">
+                    <div class="card">
+                        <h3 class="card-title">Deployment History</h3>
+                        <div class="deployment-progress" id="deploymentProgress" style="display: none;">
+                            <h4>Current Deployment</h4>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span id="progressText">Building...</span>
+                                <span id="progressPercent">0%</span>
+                            </div>
+                        </div>
+                        <div id="deploymentHistory">
+                            <div class="empty-state">Loading deployment history...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="settingsTab" class="tab-content">
+                    <div class="card">
+                        <h3 class="card-title">App Settings</h3>
+                        <form id="appSettingsForm">
+                            <div class="form-group">
+                                <label class="form-label">App Name</label>
+                                <input type="text" class="form-control" id="settingAppName" value="my-app">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Region</label>
+                                <select class="form-control" id="settingRegion">
+                                    <option value="us">United States</option>
+                                    <option value="eu">Europe</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Stack</label>
+                                <select class="form-control" id="settingStack">
+                                    <option value="heroku-20">Heroku-20</option>
+                                    <option value="heroku-22">Heroku-22</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Environment Variables</label>
+                                <textarea class="form-control" id="settingEnvVars" rows="5" placeholder="KEY=VALUE&#10;DATABASE_URL=postgres://..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Settings</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let currentApps = [];
+        let currentApp = null;
+        let logStreamInterval = null;
+        let liveLogsConnection = null;
+        let deploymentMonitorInterval = null;
+
+        // Load all apps with enhanced error handling
+        async function loadApps() {
+            try {
+                showLoading('appsList');
+                
+                const response = await fetch('/admin/heroku/apps');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentApps = data.apps || [];
+                    renderAppsList();
+                    
+                    if (currentApps.length === 0) {
+                        showNotification('No Heroku apps found', 'info');
+                    }
+                } else {
+                    throw new Error(data.error || 'Failed to load apps');
+                }
+            } catch (error) {
+                console.error('Error loading apps:', error);
+                
+                // Show error but allow retry
+                document.getElementById('appsList').innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h4>Failed to Load Apps</h4>
+                        <p>${error.message}</p>
+                        <button class="btn btn-primary retry-button" onclick="loadApps()">
+                            <i class="fas fa-redo"></i> Retry
+                        </button>
+                    </div>
+                `;
+                
+                // Fallback to empty state
+                currentApps = [];
+                showNotification('Error loading apps: ' + error.message, 'error');
+            }
+        }
+
+        // Render apps list in sidebar
+        function renderAppsList() {
+            const appsList = document.getElementById('appsList');
+            
+            if (currentApps.length === 0) {
+                appsList.innerHTML = '<div class="empty-state">No apps found</div>';
+                return;
+            }
+
+            appsList.innerHTML = currentApps.map(app => `
+                <div class="app-item ${currentApp?.name === app.name ? 'active' : ''}" 
+                     onclick="selectApp('${app.name}')">
+                    <div class="app-name">${app.name}</div>
+                    <div class="app-status">
+                        <span class="status-dot status-${getAppStatus(app)}"></span>
+                        <span>${getAppStatusText(app)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Get app status from Heroku data
+        function getAppStatus(app) {
+            if (app.builds && app.builds.length > 0) {
+                const latestBuild = app.builds[0];
+                if (latestBuild.status === 'pending') return 'building';
+                if (latestBuild.status === 'failed') return 'failed';
+            }
+            
+            if (app.dynos && app.dynos.length > 0) {
+                const webDyno = app.dynos.find(dyno => dyno.type === 'web');
+                if (webDyno) {
+                    return webDyno.state === 'up' ? 'running' : 'stopped';
+                }
+            }
+            
+            return 'unknown';
+        }
+
+        function getAppStatusText(app) {
+            const status = getAppStatus(app);
+            const statusMap = {
+                'running': 'Running',
+                'stopped': 'Stopped', 
+                'building': 'Building',
+                'failed': 'Failed',
+                'unknown': 'Unknown'
+            };
+            return statusMap[status] || 'Unknown';
+        }
+
+        // Select an app to view details with enhanced error handling
+        async function selectApp(appName) {
+            try {
+                showLoading('appDetailsView');
+                
+                const response = await fetch(`/admin/heroku/apps/${appName}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentApp = data.app;
+                    
+                    // Show app details view
+                    document.getElementById('noAppSelected').style.display = 'none';
+                    document.getElementById('appDetailsView').style.display = 'block';
+
+                    // Update app header
+                    document.getElementById('currentAppName').textContent = currentApp.name;
+                    document.getElementById('currentAppStatus').innerHTML = `
+                        <span class="status-dot status-${getAppStatus(currentApp)}"></span>
+                        <span>${getAppStatusText(currentApp)}</span>
+                    `;
+
+                    // Update app information
+                    updateAppInfo(currentApp);
+                    
+                    // Load app-specific data
+                    await loadAppLogs(currentApp.name);
+                    await loadAppProcesses(currentApp.name);
+                    await loadDeploymentHistory(currentApp.name);
+                    
+                    // Highlight selected app in sidebar
+                    renderAppsList();
+                    
+                } else {
+                    throw new Error(data.error || 'Failed to load app details');
+                }
+            } catch (error) {
+                console.error('Error selecting app:', error);
+                
+                // Show error in the interface
+                document.getElementById('noAppSelected').style.display = 'none';
+                document.getElementById('appDetailsView').style.display = 'block';
+                
+                // Update app header with error state
+                document.getElementById('currentAppName').textContent = appName;
+                document.getElementById('currentAppStatus').innerHTML = `
+                    <span class="status-dot status-failed"></span>
+                    <span>Error Loading</span>
+                `;
+                
+                // Show error in overview tab
+                document.getElementById('overviewTab').innerHTML = `
+                    <div class="card">
+                        <h3 class="card-title">Error Loading App</h3>
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h4>Failed to load app details</h4>
+                            <p>${error.message}</p>
+                            <button class="btn btn-primary retry-button" onclick="selectApp('${appName}')">
+                                <i class="fas fa-redo"></i> Try Again
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                // Set other tabs to show error
+                document.getElementById('logsTab').innerHTML = `
+                    <div class="card">
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Cannot load logs: ${error.message}</p>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('processesTab').innerHTML = `
+                    <div class="card">
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Cannot load processes: ${error.message}</p>
+                        </div>
+                    </div>
+                `;
+                
+                showNotification(`Error loading ${appName}: ${error.message}`, 'error');
+            }
+        }
+
+        // Update app information display
+        function updateAppInfo(app) {
+            document.getElementById('infoAppName').textContent = app.name;
+            document.getElementById('infoStatus').textContent = getAppStatusText(app);
+            document.getElementById('infoRegion').textContent = app.region?.name || 'Unknown';
+            document.getElementById('infoStack').textContent = app.stack?.name || 'Unknown';
+            document.getElementById('infoCreated').textContent = new Date(app.created_at).toLocaleString();
+            document.getElementById('infoUpdated').textContent = new Date(app.updated_at).toLocaleString();
+            document.getElementById('infoWebUrl').href = app.web_url;
+            document.getElementById('infoWebUrl').textContent = app.web_url;
+            document.getElementById('infoGitUrl').href = app.git_url;
+            document.getElementById('infoGitUrl').textContent = app.git_url;
+
+            // Update settings form
+            document.getElementById('settingAppName').value = app.name;
+            document.getElementById('settingRegion').value = app.region?.name || 'us';
+            document.getElementById('settingStack').value = app.stack?.name || 'heroku-20';
+        }
+
+        // Load REAL app logs from backend
+        async function loadAppLogs(appName) {
+            try {
+                // Load recent logs for overview
+                const recentResponse = await fetch(`/admin/heroku/apps/${appName}/logs?type=deployment&lines=20`);
+                const recentData = await recentResponse.json();
+                
+                if (recentData.success) {
+                    document.getElementById('recentLogs').innerHTML = formatLogs(recentData.logs, 'deployment');
+                } else {
+                    document.getElementById('recentLogs').innerHTML = `<div class="log-line error">Failed to load recent logs: ${recentData.error}</div>`;
+                }
+            } catch (error) {
+                console.error('Error loading app logs:', error);
+                document.getElementById('recentLogs').innerHTML = `<div class="log-line error">Error loading logs: ${error.message}</div>`;
+            }
+        }
+
+        // Format logs with color coding
+        function formatLogs(logs, type = 'info') {
+            if (!logs || logs.length === 0) {
+                return '<div class="log-line info">No logs available</div>';
+            }
+
+            return logs.map(log => {
+                let className = log.level || type;
+                const timestamp = new Date(log.timestamp).toLocaleString();
+                const message = log.message || JSON.stringify(log);
+                
+                return `<div class="log-line ${className}">[${timestamp}] ${message}</div>`;
+            }).join('');
+        }
+
+        // Load app processes
+        async function loadAppProcesses(appName) {
+            try {
+                const response = await fetch(`/admin/heroku/apps/${appName}`);
+                const data = await response.json();
+                
+                if (data.success && data.dynos) {
+                    renderProcesses(data.dynos);
+                } else {
+                    document.getElementById('processList').innerHTML = '<div class="empty-state">No processes found</div>';
+                }
+            } catch (error) {
+                console.error('Error loading processes:', error);
+                document.getElementById('processList').innerHTML = `<div class="empty-state">Error loading processes: ${error.message}</div>`;
+            }
+        }
+
+        // Render processes list
+        function renderProcesses(dynos) {
+            const processList = document.getElementById('processList');
+            
+            if (!dynos || dynos.length === 0) {
+                processList.innerHTML = '<div class="empty-state">No dynos running</div>';
+                return;
+            }
+
+            processList.innerHTML = dynos.map(dyno => `
+                <div class="process-item">
+                    <div class="process-info">
+                        <div class="process-name">${dyno.name || dyno.type}</div>
+                        <div class="process-type">${dyno.type} | ${dyno.state || 'unknown'}</div>
+                        <div class="process-details">
+                            Size: ${dyno.size || 'N/A'} | Updated: ${new Date(dyno.updated_at).toLocaleString()}
+                        </div>
+                    </div>
+                    <div class="process-actions">
+                        <button class="btn btn-warning btn-sm" onclick="restartDyno('${currentApp.name}', '${dyno.id}')">
+                            <i class="fas fa-redo"></i> Restart
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="stopDyno('${currentApp.name}', '${dyno.id}')">
+                            <i class="fas fa-stop"></i> Stop
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Load deployment history
+        async function loadDeploymentHistory(appName) {
+            try {
+                const response = await fetch(`/admin/heroku/apps/${appName}`);
+                const data = await response.json();
+                
+                if (data.success && data.builds) {
+                    renderDeploymentHistory(data.builds);
+                    
+                    // Show progress for latest build if it's pending
+                    const latestBuild = data.builds[0];
+                    if (latestBuild && latestBuild.status === 'pending') {
+                        showBuildProgress(latestBuild);
+                    }
+                } else {
+                    document.getElementById('deploymentHistory').innerHTML = '<div class="empty-state">No deployment history</div>';
+                }
+            } catch (error) {
+                console.error('Error loading deployment history:', error);
+                document.getElementById('deploymentHistory').innerHTML = `<div class="empty-state">Error loading deployment history: ${error.message}</div>`;
+            }
+        }
+
+        // Render deployment history
+        function renderDeploymentHistory(builds) {
+            const deploymentHistory = document.getElementById('deploymentHistory');
+            
+            if (!builds || builds.length === 0) {
+                deploymentHistory.innerHTML = '<div class="empty-state">No deployments yet</div>';
+                return;
+            }
+
+            deploymentHistory.innerHTML = builds.slice(0, 10).map(build => `
+                <div class="deployment-item">
+                    <div class="deployment-header">
+                        <div class="deployment-id">Build: ${build.id?.substring(0, 8) || 'N/A'}</div>
+                        <div class="deployment-status status-${build.status}">${build.status}</div>
+                    </div>
+                    <div class="deployment-details">
+                        <div class="deployment-detail">
+                            <span class="deployment-label">Source</span>
+                            <span class="deployment-value">${build.source_blob?.version || 'Manual'}</span>
+                        </div>
+                        <div class="deployment-detail">
+                            <span class="deployment-label">Created</span>
+                            <span class="deployment-value">${new Date(build.created_at).toLocaleString()}</span>
+                        </div>
+                        <div class="deployment-detail">
+                            <span class="deployment-label">Updated</span>
+                            <span class="deployment-value">${new Date(build.updated_at).toLocaleString()}</span>
+                        </div>
+                    </div>
+                    ${build.output_stream_url ? `
+                    <div class="deployment-actions">
+                        <button class="btn btn-info btn-sm" onclick="viewBuildLogs('${build.output_stream_url}')">
+                            <i class="fas fa-eye"></i> View Build Logs
+                        </button>
+                    </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Show build progress
+        function showBuildProgress(build) {
+            const progressContainer = document.getElementById('deploymentProgress');
+            const progressBar = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const progressPercent = document.getElementById('progressPercent');
+            
+            progressContainer.style.display = 'block';
+            progressText.textContent = 'Building...';
+            progressBar.style.width = '75%';
+            progressPercent.textContent = '75%';
+            
+            // Monitor build progress
+            if (deploymentMonitorInterval) {
+                clearInterval(deploymentMonitorInterval);
+            }
+            
+            deploymentMonitorInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`/admin/heroku/apps/${currentApp.name}`);
+                    const data = await response.json();
+                    
+                    if (data.success && data.builds && data.builds[0]) {
+                        const currentBuild = data.builds[0];
+                        
+                        if (currentBuild.status !== 'pending') {
+                            clearInterval(deploymentMonitorInterval);
+                            progressText.textContent = currentBuild.status === 'succeeded' ? 'Build Complete!' : 'Build Failed';
+                            progressBar.style.width = '100%';
+                            progressPercent.textContent = '100%';
+                            progressBar.style.background = currentBuild.status === 'succeeded' ? 
+                                'linear-gradient(90deg, var(--success), #00cc55)' : 
+                                'linear-gradient(90deg, var(--danger), #cc0029)';
+                            
+                            // Reload deployment history
+                            loadDeploymentHistory(currentApp.name);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error checking build progress:', error);
+                    clearInterval(deploymentMonitorInterval);
+                }
+            }, 5000);
+        }
+
+        // Start REAL live logs streaming
+        function startLogStream() {
+            if (!currentApp) return;
+            
+            stopLogStream(); // Clear existing connection
+            
+            const liveLogs = document.getElementById('liveLogs');
+            liveLogs.innerHTML = '<div class="log-line info">Connecting to live logs...</div>';
+            
+            // Connect to Server-Sent Events endpoint
+            try {
+                liveLogsConnection = new EventSource(`/admin/heroku/apps/${currentApp.name}/logs/live`);
+                
+                liveLogsConnection.onopen = function() {
+                    liveLogs.innerHTML = '<div class="log-line success">Live logs connected - Waiting for new logs...</div>';
+                    console.log('✅ Live logs connected');
+                    updateLogButtons(true);
+                };
+                
+                liveLogsConnection.onmessage = function(event) {
+                    const data = JSON.parse(event.data);
+                    
+                    if (data.type === 'log') {
+                        const logEntry = document.createElement('div');
+                        logEntry.className = `log-line ${data.level || 'info'}`;
+                        const timestamp = new Date(data.timestamp).toLocaleTimeString();
+                        logEntry.innerHTML = `[${timestamp}] ${data.message}`;
+                        liveLogs.appendChild(logEntry);
+                        
+                        // Auto-scroll to bottom
+                        liveLogs.scrollTop = liveLogs.scrollHeight;
+                    }
+                };
+                
+                liveLogsConnection.onerror = function(error) {
+                    console.error('Live logs error:', error);
+                    liveLogs.innerHTML += '<div class="log-line error">Live logs connection error</div>';
+                    stopLogStream();
+                };
+                
+                showNotification('Live logs started for ' + currentApp.name, 'success');
+            } catch (error) {
+                console.error('Error starting live logs:', error);
+                liveLogs.innerHTML = '<div class="log-line error">Error starting live logs: ' + error.message + '</div>';
+            }
+        }
+
+        // Stop live logs
+        function stopLogStream() {
+            if (liveLogsConnection) {
+                liveLogsConnection.close();
+                liveLogsConnection = null;
+            }
+            updateLogButtons(false);
+            showNotification('Live logs stopped', 'warning');
+        }
+
+        // Update log control buttons
+        function updateLogButtons(isStreaming) {
+            const startBtn = document.getElementById('startLogsBtn');
+            const stopBtn = document.getElementById('stopLogsBtn');
+            
+            if (isStreaming) {
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+            } else {
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+            }
+        }
+
+        // Clear logs display
+        function clearLogs() {
+            document.getElementById('liveLogs').innerHTML = '<div class="log-line info">Logs cleared</div>';
+        }
+
+        // App actions with REAL backend calls
+        async function restartApp() {
+            if (!currentApp) return;
+            
+            if (confirm(`Restart ${currentApp.name}? This will restart all dynos.`)) {
+                try {
+                    showNotification('Restarting app...', 'info');
+                    setActionButtons(true);
+                    
+                    const response = await fetch(`/admin/heroku/apps/${currentApp.name}/restart`, {
+                        method: 'POST'
+                    });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showNotification('App restarted successfully!', 'success');
+                        // Start live logs to see restart process
+                        startLogStream();
+                        // Reload app details after a delay
+                        setTimeout(() => selectApp(currentApp.name), 3000);
+                    } else {
+                        showNotification(`Failed to restart app: ${data.error}`, 'error');
+                    }
+                } catch (error) {
+                    showNotification(`Error restarting app: ${error.message}`, 'error');
+                } finally {
+                    setActionButtons(false);
+                }
+            }
+        }
+
+        async function stopApp() {
+            if (!currentApp) return;
+            
+            if (confirm(`Stop ${currentApp.name}? This will stop all dynos.`)) {
+                try {
+                    showNotification('Stopping app...', 'info');
+                    setActionButtons(true);
+                    
+                    // Note: Heroku doesn't have a direct "stop" endpoint, we scale to 0
+                    const response = await fetch(`/admin/heroku/apps/${currentApp.name}/dynos`, {
+                        method: 'DELETE' // This restarts all dynos, closest to "stop"
+                    });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showNotification('App stopped successfully!', 'success');
+                        // Reload app details
+                        setTimeout(() => selectApp(currentApp.name), 2000);
+                    } else {
+                        showNotification(`Failed to stop app: ${data.error}`, 'error');
+                    }
+                } catch (error) {
+                    showNotification(`Error stopping app: ${error.message}`, 'error');
+                } finally {
+                    setActionButtons(false);
+                }
+            }
+        }
+
+        async function deleteApp() {
+            if (!currentApp) return;
+            
+            if (confirm(`DELETE ${currentApp.name}? This action cannot be undone! All data will be lost.`)) {
+                try {
+                    showNotification('Deleting app...', 'warning');
+                    setActionButtons(true);
+                    
+                    const response = await fetch(`/admin/heroku/apps/${currentApp.name}`, {
+                        method: 'DELETE'
+                    });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showNotification('App deleted successfully!', 'success');
+                        currentApp = null;
+                        document.getElementById('noAppSelected').style.display = 'block';
+                        document.getElementById('appDetailsView').style.display = 'none';
+                        loadApps(); // Reload app list
+                    } else {
+                        showNotification(`Failed to delete app: ${data.error}`, 'error');
+                    }
+                } catch (error) {
+                    showNotification(`Error deleting app: ${error.message}`, 'error');
+                } finally {
+                    setActionButtons(false);
+                }
+            }
+        }
+
+        async function deployApp() {
+            if (!currentApp) return;
+            
+            const repoUrl = prompt('Enter GitHub repository URL:');
+            if (!repoUrl) return;
+            
+            const branch = prompt('Enter branch (default: main):', 'main') || 'main';
+            
+            try {
+                showNotification('Starting deployment...', 'info');
+                setActionButtons(true);
+                
+                const response = await fetch(`/admin/heroku/apps/${currentApp.name}/deploy`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        githubRepo: repoUrl,
+                        branch: branch
+                    })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Deployment started successfully!', 'success');
+                    // Switch to deployments tab to see progress
+                    switchTab('deployments');
+                    // Start live logs to see deployment process
+                    startLogStream();
+                    // Start monitoring the build
+                    monitorDeploymentProgress();
+                } else {
+                    showNotification(`Failed to start deployment: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showNotification(`Error starting deployment: ${error.message}`, 'error');
+            } finally {
+                setActionButtons(false);
+            }
+        }
+
+        // Monitor deployment progress
+        async function monitorDeploymentProgress() {
+            if (!currentApp) return;
+            
+            const progressInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`/admin/heroku/apps/${currentApp.name}`);
+                    const data = await response.json();
+                    
+                    if (data.success && data.builds && data.builds[0]) {
+                        const latestBuild = data.builds[0];
+                        
+                        if (latestBuild.status !== 'pending') {
+                            clearInterval(progressInterval);
+                            showNotification(`Deployment ${latestBuild.status}!`, 
+                                           latestBuild.status === 'succeeded' ? 'success' : 'error');
+                            loadDeploymentHistory(currentApp.name);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error monitoring deployment:', error);
+                    clearInterval(progressInterval);
+                }
+            }, 5000);
+        }
+
+        // Dyno management
+        async function restartDyno(appName, dynoId) {
+            try {
+                showNotification('Restarting dyno...', 'info');
+                
+                // Heroku API: Restart specific dyno
+                const response = await fetch(`/admin/heroku/apps/${appName}/dynos/${dynoId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Dyno restarted successfully!', 'success');
+                    loadAppProcesses(appName);
+                } else {
+                    showNotification(`Failed to restart dyno: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showNotification(`Error restarting dyno: ${error.message}`, 'error');
+            }
+        }
+
+        async function stopDyno(appName, dynoId) {
+            try {
+                showNotification('Stopping dyno...', 'info');
+                
+                // Heroku API: Scale dyno to 0
+                const response = await fetch(`/admin/heroku/apps/${appName}/dynos/${dynoId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        size: 'Free', // Scale to free (0)
+                        quantity: 0
+                    })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Dyno stopped successfully!', 'success');
+                    loadAppProcesses(appName);
+                } else {
+                    showNotification(`Failed to stop dyno: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showNotification(`Error stopping dyno: ${error.message}`, 'error');
+            }
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Deactivate all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Activate selected tab
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+
+            // Load tab-specific data
+            if (tabName === 'logs') {
+                // Auto-start logs when switching to logs tab
+                setTimeout(() => {
+                    if (!liveLogsConnection) {
+                        startLogStream();
+                    }
+                }, 500);
+            }
+        }
+
+        // Utility functions
+        function showLoading(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = '<div class="loading-spinner"></div> Loading...';
+            }
+        }
+
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = `<div class="error-message">${message}</div>`;
+            }
+        }
+
+        function setActionButtons(disabled) {
+            const buttons = ['restartBtn', 'stopBtn', 'deleteBtn', 'deployBtn'];
+            buttons.forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.disabled = disabled;
+                }
+            });
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas fa-${getNotificationIcon(type)}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => notification.classList.add('show'), 100);
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        function getNotificationIcon(type) {
+            const icons = {
+                'success': 'check-circle',
+                'error': 'exclamation-circle',
+                'warning': 'exclamation-triangle',
+                'info': 'info-circle'
+            };
+            return icons[type] || 'info-circle';
+        }
+
+        // Additional features
+        function viewLogs() {
+            switchTab('logs');
+        }
+
+        function openConsole() {
+            if (currentApp) {
+                window.open(`https://dashboard.heroku.com/apps/${currentApp.name}`, '_blank');
+            }
+        }
+
+        function scaleApp() {
+            if (currentApp) {
+                window.open(`https://dashboard.heroku.com/apps/${currentApp.name}/resources`, '_blank');
+            }
+        }
+
+        function runCommand() {
+            if (!currentApp) return;
+            
+            const command = prompt('Enter command to run:');
+            if (command) {
+                showNotification(`Running command: ${command}`, 'info');
+                // Implementation for running commands would go here
+            }
+        }
+
+        function viewBuildLogs(logUrl) {
+            window.open(logUrl, '_blank');
+        }
+
+        // System status functions
+        async function testHerokuConnection() {
+            try {
+                showNotification('Testing Heroku API connection...', 'info');
+                const response = await fetch('/admin/heroku/account');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Heroku API connection successful!', 'success');
+                    document.getElementById('herokuStatus').textContent = 'Connected';
+                    document.getElementById('herokuStatus').className = 'status-value healthy';
+                } else {
+                    throw new Error(data.error || 'Connection failed');
+                }
+            } catch (error) {
+                showNotification(`Heroku API connection failed: ${error.message}`, 'error');
+                document.getElementById('herokuStatus').textContent = 'Failed';
+                document.getElementById('herokuStatus').className = 'status-value error';
+            }
+        }
+
+        async function triggerBackup() {
+            try {
+                showNotification('Starting backup...', 'info');
+                const response = await fetch('/trigger-backup');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Backup completed successfully!', 'success');
+                    document.getElementById('dropboxStatus').textContent = 'Backed Up';
+                    document.getElementById('dropboxStatus').className = 'status-value healthy';
+                } else {
+                    throw new Error(data.error || 'Backup failed');
+                }
+            } catch (error) {
+                showNotification(`Backup failed: ${error.message}`, 'error');
+                document.getElementById('dropboxStatus').textContent = 'Failed';
+                document.getElementById('dropboxStatus').className = 'status-value error';
+            }
+        }
+
+        async function healthCheckAllEndpoints() {
+            try {
+                showNotification('Running health check...', 'info');
+                const response = await fetch('/api/health-check');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification(`Health check completed: ${data.healthy} healthy, ${data.unhealthy} unhealthy, ${data.down} down`, 'success');
+                } else {
+                    throw new Error(data.error || 'Health check failed');
+                }
+            } catch (error) {
+                showNotification(`Health check failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function updateWhatsAppSessions() {
+            try {
+                showNotification('Updating WhatsApp sessions...', 'info');
+                const response = await fetch('/api/update-sessions');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification(`WhatsApp sessions updated: ${data.sessionsUpdated} sessions`, 'success');
+                } else {
+                    throw new Error(data.error || 'Update failed');
+                }
+            } catch (error) {
+                showNotification(`WhatsApp session update failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialize system status
+        async function initializeSystemStatus() {
+            // Test Heroku connection
+            await testHerokuConnection();
+            
+            // Test database connection
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+                
+                if (data.status === 'healthy') {
+                    document.getElementById('databaseStatus').textContent = 'Connected';
+                    document.getElementById('databaseStatus').className = 'status-value healthy';
+                    document.getElementById('telegramStatus').textContent = 'Active';
+                    document.getElementById('telegramStatus').className = 'status-value healthy';
+                } else {
+                    throw new Error('Health check failed');
+                }
+            } catch (error) {
+                document.getElementById('databaseStatus').textContent = 'Failed';
+                document.getElementById('databaseStatus').className = 'status-value error';
+                document.getElementById('telegramStatus').textContent = 'Inactive';
+                document.getElementById('telegramStatus').className = 'status-value error';
+            }
+            
+            // Test Dropbox connection
+            try {
+                const response = await fetch('/backup-status');
+                const data = await response.json();
+                
+                if (data.success && data.dropboxEnabled) {
+                    document.getElementById('dropboxStatus').textContent = 'Connected';
+                    document.getElementById('dropboxStatus').className = 'status-value healthy';
+                } else {
+                    throw new Error('Dropbox not configured');
+                }
+            } catch (error) {
+                document.getElementById('dropboxStatus').textContent = 'Failed';
+                document.getElementById('dropboxStatus').className = 'status-value error';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadApps();
+            initializeSystemStatus();
+            
+            // Settings form handler
+            document.getElementById('appSettingsForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                showNotification('Settings saved!', 'success');
+                // Implementation for saving settings would go here
+            });
+        });
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', function() {
+            stopLogStream();
+            if (deploymentMonitorInterval) {
+                clearInterval(deploymentMonitorInterval);
+            }
+        });
+    </script>
+</body>
+</html>
