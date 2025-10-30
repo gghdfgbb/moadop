@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rider Dashboard - Moadop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            /* Professional Rider Color Palette */
+            --primary: #FF6B00;
+            --primary-dark: #E55A00;
+            --primary-light: #FFE0CC;
+            --secondary: #1E1E2D;
+            --secondary-dark: #151521;
+            --accent: #00BCD4;
+            --success: #10B981;
+            --success-light: #D1FAE5;
+            --warning: #F59E0B;
+            --warning-light: #FEF3C7;
+            --error: #EF4444;
+            --error-light: #FEE2E2;
+            --info: #3B82F6;
+            --info-light: #DBEAFE;
+            
+            /* Neutral Colors */
+            --white: #FFFFFF;
+            --gray-50: #F8FAFC;
+            --gray-100: #F1F5F9;
+            --gray-200: #E2E8F0;
+            --gray-300: #CBD5E1;
+            --gray-400: #94A3B8;
+            --gray-500: #64748B;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1E293B;
+            --gray-900: #0F172A;
+            
+            /* Semantic Colors */
+            --bg-primary: var(--white);
+            --bg-secondary: var(--gray-50);
+            --bg-tertiary: var(--gray-100);
+            --text-primary: var(--gray-900);
+            --text-secondary: var(--gray-600);
+            --text-tertiary: var(--gray-400);
+            --border-light: var(--gray-200);
+            --border-medium: var(--gray-300);
+            
+            /* Typography */
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 1.875rem;
+            --text-4xl: 2.25rem;
+            
+            /* Spacing */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-10: 2.5rem;
+            --space-12: 3rem;
+            --space-16: 4rem;
+            
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            
+            /* Transitions */
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-size: var(--text-base);
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-secondary);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Layout */
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background: var(--secondary);
+            color: var(--white);
+            padding: var(--space-6);
+            position: fixed;
+            width: 280px;
+            height: 100vh;
+            overflow-y: auto;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: var(--space-8);
+            padding-bottom: var(--space-4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo h1 {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+        }
+
+        .logo-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .user-info {
+            text-align: center;
+            margin-bottom: var(--space-6);
+            padding: var(--space-4);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 5rem;
+            height: 5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin: 0 auto var(--space-3);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-avatar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+        }
+
+        .user-name {
+            font-weight: 600;
+            margin-bottom: var(--space-1);
+            font-size: var(--text-lg);
+        }
+
+        .user-role {
+            color: var(--primary);
+            font-size: var(--text-sm);
+            font-weight: 600;
+            background: rgba(255, 107, 0, 0.2);
+            padding: var(--space-1) var(--space-3);
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: var(--space-2);
+        }
+
+        .user-state {
+            color: var(--text-tertiary);
+            font-size: var(--text-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-1);
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: var(--space-2);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--radius);
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 107, 0, 0.2);
+            color: var(--primary);
+        }
+
+        .nav-link i {
+            font-size: 1.2rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            grid-column: 2;
+            padding: var(--space-6);
+            background: var(--bg-secondary);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .header h2 {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--space-3);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-4);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            line-height: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: var(--transition-slow);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-sm {
+            padding: var(--space-2) var(--space-3);
+            font-size: var(--text-xs);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, var(--primary-dark), #CC5500);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #0DA271);
+            color: var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: linear-gradient(135deg, #0DA271, #0C8A61);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #D97706);
+            color: var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            background: linear-gradient(135deg, #D97706, #B45309);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--info), #2563EB);
+            color: var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-info:hover:not(:disabled) {
+            background: linear-gradient(135deg, #2563EB, #1D4ED8);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--error), #DC2626);
+            color: var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: linear-gradient(135deg, #DC2626, #B91C1C);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--space-6);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            margin-bottom: var(--space-4);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .card-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+            color: var(--text-primary);
+        }
+
+        .card-description {
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-6);
+        }
+
+        .stat-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: var(--space-5);
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-3);
+            font-size: 1.25rem;
+        }
+
+        .stat-icon.primary { background: var(--primary-light); color: var(--primary); }
+        .stat-icon.success { background: var(--success-light); color: var(--success); }
+        .stat-icon.warning { background: var(--warning-light); color: var(--warning); }
+        .stat-icon.info { background: var(--info-light); color: var(--info); }
+
+        .stat-value {
+            font-size: var(--text-3xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .stat-change {
+            font-size: var(--text-xs);
+            margin-top: var(--space-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-1);
+        }
+
+        .stat-change.positive { color: var(--success); }
+        .stat-change.negative { color: var(--error); }
+
+        /* Delivery Cards */
+        .delivery-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .delivery-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .delivery-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            transition: var(--transition);
+        }
+
+        .delivery-card.pending::before { background: var(--warning); }
+        .delivery-card.processing::before { background: var(--info); }
+        .delivery-card.delivered::before { background: var(--success); }
+
+        .delivery-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .delivery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-3);
+        }
+
+        .delivery-info {
+            flex: 1;
+        }
+
+        .delivery-id {
+            font-weight: 600;
+            font-size: var(--text-base);
+            margin-bottom: var(--space-1);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .delivery-id-code {
+            font-size: var(--text-xs);
+            color: var(--text-secondary);
+            font-family: monospace;
+            background: var(--bg-secondary);
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-sm);
+        }
+
+        .delivery-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-3);
+            margin-bottom: var(--space-3);
+        }
+
+        .delivery-detail {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+        }
+
+        .delivery-detail i {
+            width: 1rem;
+            text-align: center;
+            color: var(--primary);
+        }
+
+        .delivery-actions {
+            display: flex;
+            gap: var(--space-2);
+            flex-wrap: wrap;
+            margin-top: var(--space-3);
+        }
+
+        .status-badge {
+            font-size: var(--text-xs);
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .status-pending { background: var(--warning-light); color: #92400e; }
+        .status-processing { background: var(--info-light); color: #0369a1; }
+        .status-delivered { background: var(--success-light); color: #166534; }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: var(--space-4);
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            padding: var(--space-3) var(--space-4);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab:hover:not(.active) {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Map Container */
+        .map-container {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-placeholder {
+            text-align: center;
+            color: var(--text-tertiary);
+        }
+
+        .map-placeholder i {
+            font-size: 3rem;
+            margin-bottom: var(--space-2);
+            display: block;
+        }
+
+        /* Performance Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            margin-top: var(--space-4);
+        }
+
+        .metric-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 2rem;
+            height: 2rem;
+            border: 2px solid var(--gray-200);
+            border-top: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: var(--space-4);
+            right: var(--space-4);
+            z-index: 100;
+            padding: var(--space-4);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-xl);
+            max-width: 400px;
+            animation: slideIn 0.3s ease-out;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .toast-success {
+            background: var(--success);
+        }
+
+        .toast-error {
+            background: var(--error);
+        }
+
+        .toast-info {
+            background: var(--info);
+        }
+
+        .toast-warning {
+            background: var(--warning);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+
+        .modal-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: var(--space-8);
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: var(--space-4);
+            opacity: 0.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .main-content {
+                grid-column: 1;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .delivery-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: var(--space-4);
+            }
+
+            .header {
+                flex-direction: column;
+                gap: var(--space-3);
+                align-items: flex-start;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .delivery-details {
+                grid-template-columns: 1fr;
+            }
+
+            .delivery-actions {
+                flex-direction: column;
+            }
+
+            .delivery-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .user-details {
+                display: none;
+            }
+
+            .card {
+                padding: var(--space-4);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>
+                    <div class="logo-icon">
+                        <i class="fas fa-motorcycle"></i>
+                    </div>
+                    Moadop Rider
+                </h1>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">🚗</div>
+                <div class="user-name" id="userName">Loading...</div>
+                <div class="user-role" id="userRole">Delivery Rider</div>
+                <div class="user-state" id="userState">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span id="userStateText">State: Loading...</span>
+                </div>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-tab="overview">
+                        <i class="fas fa-tachometer-alt"></i> Overview
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="deliveries">
+                        <i class="fas fa-shipping-fast"></i> My Deliveries
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="available">
+                        <i class="fas fa-bullseye"></i> Available Jobs
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="map">
+                        <i class="fas fa-map-marked-alt"></i> Delivery Map
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="performance">
+                        <i class="fas fa-chart-line"></i> My Performance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="earnings">
+                        <i class="fas fa-money-bill-wave"></i> Earnings
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header">
+                <h2 id="pageTitle">Rider Dashboard</h2>
+                <div class="header-actions">
+                    <div class="current-time" id="currentTime"></div>
+                    <button class="btn btn-primary" onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button class="btn btn-success" id="availabilityBtn" onclick="toggleAvailability()">
+                        <i class="fas fa-check-circle"></i> Available
+                    </button>
+                </div>
+            </div>
+
+            <!-- Overview Tab -->
+            <div id="overview" class="tab-content active">
+                <!-- Statistics Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon primary">
+                            <i class="fas fa-shipping-fast"></i>
+                        </div>
+                        <div class="stat-value" id="activeDeliveries">0</div>
+                        <div class="stat-label">Active Deliveries</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> 15% from yesterday
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-value" id="completedToday">0</div>
+                        <div class="stat-label">Completed Today</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> 8% from yesterday
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon warning">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-value" id="avgDeliveryTime">0m</div>
+                        <div class="stat-label">Avg. Delivery Time</div>
+                        <div class="stat-change negative">
+                            <i class="fas fa-arrow-down"></i> 5% from last week
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon info">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="stat-value" id="earningsToday">₦0</div>
+                        <div class="stat-label">Today's Earnings</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> 12% from yesterday
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Quick Actions</h3>
+                        <p class="card-description">Frequently used actions</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-3);">
+                        <button class="btn btn-primary" onclick="showTab('deliveries')">
+                            <i class="fas fa-shipping-fast"></i> My Deliveries
+                        </button>
+                        <button class="btn btn-success" onclick="showTab('available')">
+                            <i class="fas fa-bullseye"></i> Available Jobs
+                        </button>
+                        <button class="btn btn-info" onclick="showTab('map')">
+                            <i class="fas fa-map-marked-alt"></i> View Map
+                        </button>
+                        <button class="btn btn-warning" onclick="showTab('earnings')">
+                            <i class="fas fa-money-bill-wave"></i> View Earnings
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recent Deliveries -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Deliveries</h3>
+                        <p class="card-description">Your most recent delivery activities</p>
+                    </div>
+                    <div class="delivery-cards" id="recentDeliveries">
+                        <div class="text-center p-8 text-secondary">
+                            <div class="spinner"></div>
+                            <p class="mt-3">Loading your deliveries...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Deliveries Tab -->
+            <div id="deliveries" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">My Deliveries</h3>
+                        <p class="card-description">All deliveries assigned to you</p>
+                    </div>
+                    <div class="tabs">
+                        <button class="tab active" data-delivery-tab="all">All Deliveries</button>
+                        <button class="tab" data-delivery-tab="assigned">Assigned</button>
+                        <button class="tab" data-delivery-tab="in-progress">In Progress</button>
+                        <button class="tab" data-delivery-tab="completed">Completed</button>
+                    </div>
+                    <div class="delivery-cards" id="myDeliveriesGrid">
+                        <!-- My deliveries will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Available Jobs Tab -->
+            <div id="available" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Available Delivery Jobs</h3>
+                        <p class="card-description">Jobs available in your area</p>
+                    </div>
+                    <div class="delivery-cards" id="availableJobsGrid">
+                        <!-- Available jobs will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delivery Map Tab -->
+            <div id="map" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Delivery Map</h3>
+                        <p class="card-description">View delivery locations in your area</p>
+                    </div>
+                    <div class="map-container">
+                        <div class="map-placeholder">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <div>Delivery Map View</div>
+                            <div style="font-size: var(--text-sm); margin-top: var(--space-2);">Showing delivery locations in your area</div>
+                        </div>
+                    </div>
+                    <div class="delivery-cards" id="mapDeliveries">
+                        <!-- Map deliveries will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Tab -->
+            <div id="performance" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">My Performance</h3>
+                        <p class="card-description">Track your delivery performance metrics</p>
+                    </div>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value" id="totalDeliveries">0</div>
+                            <div class="metric-label">Total Deliveries</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="successRate">0%</div>
+                            <div class="metric-label">Success Rate</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="monthlyEarnings">₦0</div>
+                            <div class="metric-label">Monthly Earnings</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="rating">4.5</div>
+                            <div class="metric-label">Customer Rating</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: var(--space-6);">
+                        <h4 style="margin-bottom: var(--space-3);">Delivery History</h4>
+                        <div class="table-container">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid var(--border-light);">
+                                        <th style="padding: var(--space-3); text-align: left;">Date</th>
+                                        <th style="padding: var(--space-3); text-align: left;">Order ID</th>
+                                        <th style="padding: var(--space-3); text-align: left;">Customer</th>
+                                        <th style="padding: var(--space-3); text-align: left;">Location</th>
+                                        <th style="padding: var(--space-3); text-align: left;">Status</th>
+                                        <th style="padding: var(--space-3); text-align: left;">Earnings</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="deliveryHistory">
+                                    <!-- Delivery history will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Earnings Tab -->
+            <div id="earnings" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Earnings & Payments</h3>
+                        <p class="card-description">Track your earnings and payment history</p>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon success">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="stat-value" id="totalEarnings">₦0</div>
+                            <div class="stat-label">Total Earnings</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon primary">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="stat-value" id="weeklyEarnings">₦0</div>
+                            <div class="stat-label">This Week</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon info">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="stat-value" id="pendingPayout">₦0</div>
+                            <div class="stat-label">Pending Payout</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon warning">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="stat-value" id="completionRate">0%</div>
+                            <div class="stat-label">Completion Rate</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: var(--space-6);">
+                        <h4 style="margin-bottom: var(--space-3);">Payment History</h4>
+                        <div class="table-container">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid var(--border-light);">
+                                        <th style="padding: var(--space-3); text-align: left;">Date</th>
+                                        <th style="padding: var(--space-3); text-align: left;">Description</th>
+                                        <th style="padding: var(--space-3); text-align: left;">Amount</th>
+                                        <th style="padding: var(--space-3); text-align: left;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="paymentHistory">
+                                    <!-- Payment history will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Delivery Action Modal -->
+    <div class="modal" id="deliveryActionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Delivery Actions</h3>
+                <button class="modal-close" onclick="closeModal('deliveryActionModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="deliveryActionContent">
+                <!-- Delivery action form will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Delivery Details Modal -->
+    <div class="modal" id="deliveryDetailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Delivery Details</h3>
+                <button class="modal-close" onclick="closeModal('deliveryDetailsModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="deliveryDetailsContent">
+                <!-- Delivery details will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let deliveries = [];
+        let availableJobs = [];
+        let currentRiderState = '';
+        let isAvailable = true;
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserData();
+            loadDeliveries();
+            loadAvailableJobs();
+            setupEventListeners();
+            updateCurrentTime();
+            
+            // Update time every minute
+            setInterval(updateCurrentTime, 60000);
+        });
+
+        // Event listeners
+        function setupEventListeners() {
+            // Navigation tabs
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tab = this.getAttribute('data-tab');
+                    showTab(tab);
+                });
+            });
+
+            // Delivery tabs
+            document.querySelectorAll('[data-delivery-tab]').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const deliveryTab = this.getAttribute('data-delivery-tab');
+                    filterMyDeliveries(deliveryTab);
+                });
+            });
+        }
+
+        // Load user data
+        async function loadUserData() {
+            try {
+                const userId = getUserIdFromURL();
+                const response = await fetch(`/api/user/${userId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    currentUser = data.user || data.worker;
+                    currentRiderState = currentUser.state || 'Unknown';
+                    
+                    document.getElementById('userName').textContent = 
+                        `${currentUser.firstName} ${currentUser.lastName}` || 'Rider';
+                    document.getElementById('userStateText').textContent = 
+                        `State: ${currentRiderState}`;
+                    document.getElementById('userAvatar').textContent = 
+                        `${currentUser.firstName?.charAt(0) || 'R'}${currentUser.lastName?.charAt(0) || 'D'}`;
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        // Load deliveries
+        async function loadDeliveries() {
+            try {
+                const response = await fetch('/api/orders');
+                const data = await response.json();
+
+                if (data.success) {
+                    // Filter orders that are assigned to this rider or available for delivery
+                    const allOrders = data.orders;
+                    deliveries = allOrders.filter(order => 
+                        order.assignedTo === getUserIdFromURL() || 
+                        (order.status === 'processing' && !order.assignedTo)
+                    );
+                    
+                    updateStatistics();
+                    renderRecentDeliveries();
+                    renderMyDeliveries('all');
+                    updatePerformanceMetrics();
+                    updateEarnings();
+                }
+            } catch (error) {
+                console.error('Error loading deliveries:', error);
+                showToast('Error loading deliveries', 'error');
+            }
+        }
+
+        // Load available jobs
+        async function loadAvailableJobs() {
+            try {
+                const response = await fetch('/api/orders');
+                const data = await response.json();
+
+                if (data.success) {
+                    // Show orders that are processing but not assigned
+                    availableJobs = data.orders.filter(order => 
+                        order.status === 'processing' && !order.assignedTo
+                    );
+                    renderAvailableJobs();
+                }
+            } catch (error) {
+                console.error('Error loading available jobs:', error);
+                showToast('Error loading available jobs', 'error');
+            }
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            const activeDeliveries = deliveries.filter(d => 
+                d.status === 'processing' && d.assignedTo === getUserIdFromURL()
+            ).length;
+            
+            const completedToday = deliveries.filter(d => 
+                d.status === 'delivered' && d.deliveredBy === getUserIdFromURL() &&
+                new Date(d.deliveredAt).toDateString() === new Date().toDateString()
+            ).length;
+
+            document.getElementById('activeDeliveries').textContent = activeDeliveries;
+            document.getElementById('completedToday').textContent = completedToday;
+            document.getElementById('avgDeliveryTime').textContent = '45m'; // Placeholder
+            document.getElementById('earningsToday').textContent = `₦${completedToday * 500}`; // Placeholder calculation
+        }
+
+        // Update performance metrics
+        function updatePerformanceMetrics() {
+            const totalDeliveries = deliveries.filter(d => 
+                d.deliveredBy === getUserIdFromURL()
+            ).length;
+            
+            const completedDeliveries = deliveries.filter(d => 
+                d.status === 'delivered' && d.deliveredBy === getUserIdFromURL()
+            ).length;
+            
+            const successRate = totalDeliveries > 0 ? 
+                Math.round((completedDeliveries / totalDeliveries) * 100) : 0;
+
+            document.getElementById('totalDeliveries').textContent = totalDeliveries;
+            document.getElementById('successRate').textContent = `${successRate}%`;
+            document.getElementById('monthlyEarnings').textContent = `₦${totalDeliveries * 500}`;
+            document.getElementById('rating').textContent = '4.7'; // Placeholder
+        }
+
+        // Update earnings
+        function updateEarnings() {
+            const totalDeliveries = deliveries.filter(d => 
+                d.deliveredBy === getUserIdFromURL()
+            ).length;
+            
+            const weeklyDeliveries = deliveries.filter(d => 
+                d.status === 'delivered' && d.deliveredBy === getUserIdFromURL() &&
+                isThisWeek(new Date(d.deliveredAt))
+            ).length;
+
+            document.getElementById('totalEarnings').textContent = `₦${totalDeliveries * 500}`;
+            document.getElementById('weeklyEarnings').textContent = `₦${weeklyDeliveries * 500}`;
+            document.getElementById('pendingPayout').textContent = `₦${weeklyDeliveries * 500}`;
+            document.getElementById('completionRate').textContent = '95%'; // Placeholder
+        }
+
+        // Render recent deliveries
+        function renderRecentDeliveries() {
+            const container = document.getElementById('recentDeliveries');
+            const recentDeliveries = deliveries
+                .filter(d => d.assignedTo === getUserIdFromURL())
+                .slice(0, 3);
+
+            if (recentDeliveries.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-shipping-fast"></i>
+                        </div>
+                        <p>No recent deliveries</p>
+                        <p class="text-sm mt-2">Deliveries assigned to you will appear here</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = recentDeliveries.map(delivery => `
+                <div class="delivery-card fade-in ${delivery.status}">
+                    <div class="delivery-header">
+                        <div class="delivery-info">
+                            <div class="delivery-id">
+                                <i class="fas fa-barcode"></i>
+                                ${delivery.id}
+                            </div>
+                        </div>
+                        <span class="status-badge status-${delivery.status}">
+                            <i class="fas fa-${getStatusIcon(delivery.status)}"></i>
+                            ${delivery.status.charAt(0).toUpperCase() + delivery.status.slice(1)}
+                        </span>
+                    </div>
+                    <div class="delivery-details">
+                        <div class="delivery-detail">
+                            <i class="fas fa-user"></i>
+                            <span>${delivery.customerName}</span>
+                        </div>
+                        <div class="delivery-detail">
+                            <i class="fas fa-phone"></i>
+                            <span>${delivery.customerPhone}</span>
+                        </div>
+                        <div class="delivery-detail">
+                            <i class="fas fa-box"></i>
+                            <span>${delivery.product} (x${delivery.quantity || 1})</span>
+                        </div>
+                        <div class="delivery-detail">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${getDeliveryLocation(delivery)}</span>
+                        </div>
+                    </div>
+                    <div class="delivery-actions">
+                        ${delivery.status === 'processing' ? `
+                            <button class="btn btn-success btn-sm" onclick="startDelivery('${delivery.id}')">
+                                <i class="fas fa-play-circle"></i> Start Delivery
+                            </button>
+                        ` : delivery.status === 'assigned' ? `
+                            <button class="btn btn-primary btn-sm" onclick="updateDeliveryStatus('${delivery.id}')">
+                                <i class="fas fa-sync-alt"></i> Update Status
+                            </button>
+                        ` : ''}
+                        <button class="btn btn-info btn-sm" onclick="contactCustomer('${delivery.id}')">
+                            <i class="fas fa-phone"></i> Call Customer
+                        </button>
+                        <button class="btn btn-warning btn-sm" onclick="getDirections('${delivery.id}')">
+                            <i class="fas fa-directions"></i> Get Directions
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render my deliveries
+        function renderMyDeliveries(filter = 'all') {
+            const container = document.getElementById('myDeliveriesGrid');
+            let filteredDeliveries = deliveries.filter(d => d.assignedTo === getUserIdFromURL());
+
+            if (filter === 'assigned') {
+                filteredDeliveries = filteredDeliveries.filter(d => d.status === 'assigned');
+            } else if (filter === 'in-progress') {
+                filteredDeliveries = filteredDeliveries.filter(d => d.status === 'processing');
+            } else if (filter === 'completed') {
+                filteredDeliveries = filteredDeliveries.filter(d => d.status === 'delivered');
+            }
+
+            if (filteredDeliveries.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-shipping-fast"></i>
+                        </div>
+                        <p>No deliveries found</p>
+                        <p class="text-sm mt-2">Deliveries assigned to you will appear here</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredDeliveries.map(delivery => `
+                <div class="delivery-card fade-in ${delivery.status}">
+                    <div class="delivery-header">
+                        <div class="delivery-info">
+                            <div class="delivery-id">
+                                <i class="fas fa-barcode"></i>
+                                ${delivery.id}
+                            </div>
+                        </div>
+                        <span class="status-badge status-${delivery.status}">
+                            <i class="fas fa-${getStatusIcon(delivery.status)}"></i>
+                            ${delivery.status.charAt(0).toUpperCase() + delivery.status.slice(1)}
+                        </span>
+                    </div>
+                    <div class="delivery-details">
+                        <div class="delivery-detail">
+                            <i class="fas fa-user"></i>
+                            <span>${delivery.customerName}</span>
+                        </div>
+                        <div class="delivery-detail">
+                            <i class="fas fa-phone"></i>
+                            <span>${delivery.customerPhone}</span>
+                        </div>
+                        ${delivery.alternatePhone ? `
+                        <div class="delivery-detail">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span>${delivery.alternatePhone}</span>
+                        </div>
+                        ` : ''}
+                        <div class="delivery-detail">
+                            <i class="fas fa-box"></i>
+                            <span>${delivery.product} (x${delivery.quantity || 1})</span>
+                        </div>
+                        <div class="delivery-detail">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${getDeliveryLocation(delivery)}</span>
+                        </div>
+                        <div class="delivery-detail">
+                            <i class="fas fa-calendar"></i>
+                            <span>${formatDate(delivery.createdAt)}</span>
+                        </div>
+                        ${delivery.comments && delivery.comments.length > 0 ? `
+                        <div class="delivery-detail">
+                            <i class="fas fa-comment"></i>
+                            <span>${delivery.comments[delivery.comments.length - 1].comment}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                    <div class="delivery-actions">
+                        ${delivery.status === 'assigned' ? `
+                            <button class="btn btn-success btn-sm" onclick="startDelivery('${delivery.id}')">
+                                <i class="fas fa-play-circle"></i> Start Delivery
+                            </button>
+                        ` : delivery.status === 'processing' ? `
+                            <button class="btn btn-primary btn-sm" onclick="updateDeliveryProgress('${delivery.id}')">
+                                <i class="fas fa-edit"></i> Update Progress
+                            </button>
+                            <button class="btn btn-success btn-sm" onclick="markDelivered('${delivery.id}')">
+                                <i class="fas fa-check-circle"></i> Mark Delivered
+                            </button>
+                        ` : ''}
+                        <button class="btn btn-info btn-sm" onclick="contactCustomer('${delivery.id}')">
+                            <i class="fas fa-phone"></i> Call Customer
+                        </button>
+                        <button class="btn btn-warning btn-sm" onclick="getDirections('${delivery.id}')">
+                            <i class="fas fa-directions"></i> Get Directions
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="reportIssue('${delivery.id}')">
+                            <i class="fas fa-exclamation-triangle"></i> Report Issue
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render available jobs
+        function renderAvailableJobs() {
+            const container = document.getElementById('availableJobsGrid');
+            
+            if (availableJobs.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <p>No available jobs</p>
+                        <p class="text-sm mt-2">Available delivery jobs will appear here</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = availableJobs.map(job => `
+                <div class="delivery-card">
+                    <div class="delivery-header">
+                        <div class="delivery-info">
+                            <div class="delivery-id">
+                                <i class="fas fa-barcode"></i>
+                                ${job.id}
+                            </div>
+                        </div>
+                        <span class="status-badge status-pending">
+                            <i class="fas fa-clock"></i>
+                            Available
+                        </span>
+                    </div>
+                    <div class="delivery-details">
+                        <div class="delivery-detail">
+                            <i class="fas fa-user"></i>
+                            <span>${job.customerName}</span>
+                        </div>
+                        <div class="delivery-detail">
+                            <i class="fas fa-phone"></i>
+                            <span>${job.customerPhone}</span>
+                        </div>
+                        <div class="delivery-detail">
+                            <i class="fas fa-box"></i>
+                            <span>${job.product} (x${job.quantity || 1})</span>
+                        </div>
+                        <div class="delivery-detail">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${getDeliveryLocation(job)}</span>
+                        </div>
+                        <div class="delivery-detail">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>Estimated Earnings: ₦500</span>
+                        </div>
+                    </div>
+                    <div class="delivery-actions">
+                        <button class="btn btn-success btn-sm" onclick="acceptJob('${job.id}')">
+                            <i class="fas fa-check-circle"></i> Accept Job
+                        </button>
+                        <button class="btn btn-info btn-sm" onclick="viewJobDetails('${job.id}')">
+                            <i class="fas fa-info-circle"></i> View Details
+                        </button>
+                        <button class="btn btn-warning btn-sm" onclick="calculateDistance('${job.id}')">
+                            <i class="fas fa-ruler"></i> Check Distance
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Delivery actions
+        async function startDelivery(deliveryId) {
+            try {
+                const response = await fetch(`/api/process-order/${deliveryId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ processedBy: getUserIdFromURL() })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showToast('Delivery started! Please proceed to the delivery location.', 'success');
+                    loadDeliveries();
+                } else {
+                    showToast('Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showToast('Error starting delivery', 'error');
+            }
+        }
+
+        async function markDelivered(deliveryId) {
+            try {
+                const response = await fetch(`/api/deliver-order/${deliveryId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ deliveredBy: getUserIdFromURL() })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showToast('Delivery marked as completed!', 'success');
+                    loadDeliveries();
+                    loadAvailableJobs();
+                } else {
+                    showToast('Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showToast('Error marking delivery as completed', 'error');
+            }
+        }
+
+        async function acceptJob(jobId) {
+            if (confirm('Are you sure you want to accept this delivery job?')) {
+                try {
+                    const response = await fetch(`/api/assign-order/${jobId}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            assignedTo: getUserIdFromURL(), 
+                            assignedBy: 'rider_self_assign' 
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        showToast('Job accepted successfully!', 'success');
+                        loadDeliveries();
+                        loadAvailableJobs();
+                    } else {
+                        showToast('Error: ' + data.error, 'error');
+                    }
+                } catch (error) {
+                    showToast('Error accepting job', 'error');
+                }
+            }
+        }
+
+        // Utility functions
+        function getUserIdFromURL() {
+            const path = window.location.pathname.split('/');
+            return path[path.length - 1];
+        }
+
+        function getDeliveryLocation(delivery) {
+            // This would typically come from the order data
+            // For now, return a placeholder based on the rider's state
+            return `${currentRiderState} Area`;
+        }
+
+        function getStatusIcon(status) {
+            switch(status) {
+                case 'pending': return 'clock';
+                case 'processing': return 'sync-alt';
+                case 'delivered': return 'check';
+                default: return 'question';
+            }
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function isThisWeek(date) {
+            const today = new Date();
+            const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+            const endOfWeek = new Date(today.setDate(today.getDate() + 6));
+            return date >= startOfWeek && date <= endOfWeek;
+        }
+
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked nav link
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            // Update page title
+            document.getElementById('pageTitle').textContent = 
+                tabName.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') + ' - Moadop';
+        }
+
+        function filterMyDeliveries(filter) {
+            // Update active tab
+            document.querySelectorAll('[data-delivery-tab]').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-delivery-tab="${filter}"]`).classList.add('active');
+
+            // Render filtered deliveries
+            renderMyDeliveries(filter);
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function toggleAvailability() {
+            isAvailable = !isAvailable;
+            const btn = document.getElementById('availabilityBtn');
+            if (isAvailable) {
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Available';
+                btn.className = 'btn btn-success';
+                showToast('You are now available for deliveries', 'success');
+            } else {
+                btn.innerHTML = '<i class="fas fa-times-circle"></i> Unavailable';
+                btn.className = 'btn btn-danger';
+                showToast('You are now unavailable for deliveries', 'warning');
+            }
+        }
+
+        function refreshData() {
+            loadDeliveries();
+            loadAvailableJobs();
+            showToast('Data refreshed!', 'success');
+        }
+
+        function updateCurrentTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = 
+                now.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <i class="fas fa-${getToastIcon(type)}"></i>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function getToastIcon(type) {
+            switch(type) {
+                case 'success': return 'check-circle';
+                case 'error': return 'exclamation-circle';
+                case 'warning': return 'exclamation-triangle';
+                case 'info': return 'info-circle';
+                default: return 'info-circle';
+            }
+        }
+
+        // Placeholder functions for future implementation
+        function updateDeliveryStatus(deliveryId) {
+            showToast('Delivery status update feature coming soon!', 'info');
+        }
+
+        function updateDeliveryProgress(deliveryId) {
+            showToast('Delivery progress update feature coming soon!', 'info');
+        }
+
+        function contactCustomer(deliveryId) {
+            const delivery = deliveries.find(d => d.id === deliveryId);
+            showToast(`Calling customer: ${delivery.customerName} at ${delivery.customerPhone}`, 'info');
+        }
+
+        function getDirections(deliveryId) {
+            showToast('Directions feature coming soon! Will open in maps app.', 'info');
+        }
+
+        function reportIssue(deliveryId) {
+            showToast('Issue reporting feature coming soon!', 'info');
+        }
+
+        function viewJobDetails(jobId) {
+            showToast('Job details view coming soon!', 'info');
+        }
+
+        function calculateDistance(jobId) {
+            showToast('Distance calculation feature coming soon!', 'info');
+        }
+    </script>
+</body>
+</html>
